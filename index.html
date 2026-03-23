@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mipaka — Every Border. One API.</title>
+    <meta
+      name="description"
+      content="Free REST API for administrative divisions across 7 East &amp; Central African countries. Counties, regions, districts, wards, villages — normalized through a single interface."
+    />
+    <meta
+      name="keywords"
+      content="API, Africa, Kenya, counties, administrative divisions, REST API, open source"
+    />
+    <meta property="og:title" content="Mipaka — Every Border. One API." />
+    <meta
+      property="og:description"
+      content="Free REST API for administrative divisions across 7 East &amp; Central African countries."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mipaka.dev" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>"
+    />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --bg-card: #161822;
+        --border: #2a2d3a;
+        --text: #e2e4e9;
+        --text-muted: #8b8fa3;
+        --accent: #c8622a;
+        --accent-light: #e8b86d;
+        --accent-hover: #d4742f;
+        --code-bg: #1a1d2b;
+        --success: #4ade80;
+        --warning: #fbbf24;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--accent-light);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--accent-hover);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ── NAV ─────────────────────────────────── */
+      nav {
+        border-bottom: 1px solid var(--border);
+        padding: 16px 0;
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        z-index: 100;
+        backdrop-filter: blur(8px);
+      }
+      nav .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      nav .logo {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--accent-light);
+        letter-spacing: 2px;
+      }
+      nav .links {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+      nav .links a {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+      nav .links a:hover {
+        color: var(--text);
+      }
+      .btn {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        color: #fff;
+      }
+      .btn-outline {
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .btn-outline:hover {
+        border-color: var(--accent-light);
+        color: var(--accent-light);
+      }
+
+      /* ── HERO ────────────────────────────────── */
+      .hero {
+        text-align: center;
+        padding: 80px 0 60px;
+      }
+      .hero-ascii {
+        font-family: "Courier New", monospace;
+        font-size: clamp(0.45rem, 1.8vw, 0.85rem);
+        color: var(--accent);
+        line-height: 1.2;
+        margin-bottom: 24px;
+        white-space: pre;
+        display: inline-block;
+      }
+      .hero h1 {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .hero h1 span {
+        color: var(--accent-light);
+      }
+      .hero p {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 32px;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .badge-row {
+        margin-top: 32px;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .badge-row img {
+        height: 22px;
+      }
+
+      /* ── COVERAGE TABLE ──────────────────────── */
+      section {
+        padding: 60px 0;
+      }
+      section h2 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+      section .subtitle {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        background: var(--code-bg);
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      td {
+        font-size: 0.95rem;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .status-complete {
+        color: var(--success);
+      }
+      .status-partial {
+        color: var(--warning);
+      }
+
+      /* ── EXPLORER ────────────────────────────── */
+      .explorer {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 32px;
+      }
+      .country-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+      .country-pill {
+        padding: 8px 16px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        color: var(--text);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .country-pill:hover {
+        border-color: var(--accent);
+      }
+      .country-pill.active {
+        border-color: var(--accent-light);
+        background: rgba(200, 98, 42, 0.15);
+        color: var(--accent-light);
+      }
+      .cascade {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        margin-bottom: 24px;
+      }
+      .cascade-col {
+        flex: 1;
+        min-width: 180px;
+        max-width: 280px;
+      }
+      .cascade-col label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+      .cascade-select {
+        width: 100%;
+        padding: 10px 32px 10px 12px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 0.9rem;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b8fa3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+      }
+      .cascade-select:focus {
+        border-color: var(--accent-light);
+        outline: none;
+      }
+      .cascade-select option {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .explorer-crumbs {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-bottom: 16px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+      }
+      .explorer-crumbs .crumb {
+        color: var(--text-muted);
+        cursor: pointer;
+      }
+      .explorer-crumbs .crumb:hover {
+        color: var(--accent-light);
+      }
+      .explorer-crumbs .crumb.active {
+        color: var(--accent-light);
+        font-weight: 600;
+        cursor: default;
+      }
+      .explorer-crumbs .sep {
+        color: var(--border);
+        user-select: none;
+      }
+      .results-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .results-info h3 {
+        font-size: 1rem;
+      }
+      .results-info .count {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+      }
+      .result-item {
+        padding: 12px 16px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .result-item:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+      .result-item.selected {
+        border-color: var(--accent-light);
+        background: rgba(200, 98, 42, 0.1);
+      }
+      .result-item.leaf {
+        cursor: default;
+      }
+      .result-item.leaf:hover {
+        transform: none;
+      }
+      .result-item .rname {
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+      .result-item .rmeta {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .explorer-empty {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+      }
+      .explorer-empty .icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+      .api-url-bar {
+        margin-top: 16px;
+        padding: 8px 12px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        overflow-x: auto;
+        display: none;
+      }
+      .api-url-bar.visible {
+        display: block;
+      }
+      .api-url-bar .method {
+        color: var(--success);
+        font-weight: 600;
+      }
+      .json-toggle {
+        margin-top: 12px;
+        display: none;
+      }
+      .json-toggle.visible {
+        display: block;
+      }
+      .json-toggle-btn {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        margin-bottom: 8px;
+      }
+      .json-toggle-btn:hover {
+        border-color: var(--accent-light);
+        color: var(--accent-light);
+      }
+      .json-body {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+        color: var(--accent-light);
+        max-height: 300px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        display: none;
+      }
+      .json-body.visible {
+        display: block;
+      }
+
+      /* ── CODE SAMPLES ────────────────────────── */
+      .code-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 0;
+      }
+      .code-tab {
+        padding: 8px 20px;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-bottom: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        border-radius: 8px 8px 0 0;
+        transition: all 0.2s;
+      }
+      .code-tab.active {
+        background: var(--bg-card);
+        color: var(--accent-light);
+        border-bottom-color: var(--bg-card);
+      }
+      .code-block {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 0 8px 8px 8px;
+        padding: 20px;
+        display: none;
+      }
+      .code-block.active {
+        display: block;
+      }
+      .code-block pre {
+        font-family: "Courier New", monospace;
+        font-size: 0.85rem;
+        color: var(--text);
+        overflow-x: auto;
+        white-space: pre;
+      }
+      .code-block .comment {
+        color: var(--text-muted);
+      }
+      .code-block .string {
+        color: var(--success);
+      }
+      .code-block .keyword {
+        color: var(--accent-light);
+      }
+
+      /* ── CTA CARDS ───────────────────────────── */
+      .cta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+      }
+      .cta-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        transition: border-color 0.2s;
+      }
+      .cta-card:hover {
+        border-color: var(--accent);
+      }
+      .cta-card .icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+      .cta-card h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      .cta-card p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+      }
+
+      /* ── FOOTER ──────────────────────────────── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 40px 0;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+      footer .swahili {
+        font-style: italic;
+        color: var(--accent-light);
+        margin-top: 8px;
+      }
+      footer .links {
+        margin-top: 16px;
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+      }
+
+      /* ── LOADING SPINNER ─────────────────────── */
+      .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid var(--text-muted);
+        border-top-color: var(--accent-light);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+        margin-right: 6px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="container">
+        <span class="logo">MIPAKA</span>
+        <div class="links">
+          <a href="#coverage">Coverage</a>
+          <a href="#try-it">Explore</a>
+          <a href="#code">Code</a>
+          <a
+            href="https://api.mipaka.dev/api/docs/"
+            target="_blank"
+            class="btn btn-outline"
+            >API Docs</a
+          >
+          <a
+            href="https://rapidapi.com/ceddyville/api/mipaka"
+            target="_blank"
+            class="btn btn-primary"
+            >Get API Key</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-ascii" aria-hidden="true">
+          ███╗ ███╗██╗██████╗ █████╗ ██╗ ██╗ █████╗ ████╗
+          ████║██║██╔══██╗██╔══██╗██║ ██╔╝██╔══██╗
+          ██╔████╔██║██║██████╔╝███████║█████╔╝ ███████║ ██║╚██╔╝██║██║██╔═══╝
+          ██╔══██║██╔═██╗ ██╔══██║ ██║ ╚═╝ ██║██║██║ ██║ ██║██║ ██╗██║ ██║ ╚═╝
+          ╚═╝╚═╝╚═╝ ╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═╝
+        </div>
+        <h1>Every border. <span>One API.</span></h1>
+        <p>
+          Free REST API for administrative divisions across 7 East &amp; Central
+          African countries. Counties, regions, districts, wards, villages —
+          normalized through a single interface.
+        </p>
+        <div class="hero-buttons">
+          <a href="#try-it" class="btn btn-primary">Explore Live</a>
+          <a
+            href="https://api.mipaka.dev/api/docs/"
+            target="_blank"
+            class="btn btn-outline"
+            >Swagger Docs</a
+          >
+          <a
+            href="https://github.com/ceddyville/mipaka-api"
+            target="_blank"
+            class="btn btn-outline"
+            >GitHub</a
+          >
+        </div>
+        <div class="badge-row">
+          <img
+            src="https://img.shields.io/badge/License-MIT-c8622a.svg"
+            alt="MIT License"
+          />
+          <img
+            src="https://img.shields.io/badge/Python-3.11+-e8b86d.svg"
+            alt="Python"
+          />
+          <img
+            src="https://img.shields.io/badge/Countries-7-c8622a.svg"
+            alt="7 Countries"
+          />
+          <img
+            src="https://img.shields.io/badge/Records-103K+-e8b86d.svg"
+            alt="103K+ Records"
+          />
+          <img
+            src="https://img.shields.io/badge/PRs-welcome-c8622a.svg"
+            alt="PRs Welcome"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- COVERAGE -->
+    <section id="coverage">
+      <div class="container">
+        <h2>Coverage</h2>
+        <p class="subtitle">
+          103,000+ divisions across 7 countries + 229 historical records
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Levels</th>
+                <th>Records</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🇰🇪 Kenya</td>
+                <td>County → Constituency → Ward</td>
+                <td>1,954</td>
+                <td class="status-complete">✓ Complete</td>
+              </tr>
+              <tr>
+                <td>🇹🇿 Tanzania</td>
+                <td>Region → District</td>
+                <td>213</td>
+                <td class="status-partial">⚠ Partial</td>
+              </tr>
+              <tr>
+                <td>🇺🇬 Uganda</td>
+                <td>
+                  Region → District → County → Sub-county → Parish → Village
+                </td>
+                <td>83,017</td>
+                <td class="status-complete">✓ Complete</td>
+              </tr>
+              <tr>
+                <td>🇷🇼 Rwanda</td>
+                <td>Province → District → Sector → Cell → Village</td>
+                <td>17,453</td>
+                <td class="status-complete">✓ Complete</td>
+              </tr>
+              <tr>
+                <td>🇧🇮 Burundi</td>
+                <td>Province → Commune → Colline</td>
+                <td>491</td>
+                <td class="status-complete">✓ Complete</td>
+              </tr>
+              <tr>
+                <td>🇨🇩 DRC</td>
+                <td>Province → Territory</td>
+                <td>185</td>
+                <td class="status-partial">⚠ Partial</td>
+              </tr>
+              <tr>
+                <td>🇸🇸 South Sudan</td>
+                <td>State → County → Payam</td>
+                <td>110</td>
+                <td class="status-partial">⚠ Partial</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="subtitle" style="margin-top: 16px; font-size: 0.85rem">
+          Plus historical divisions: Kenya provinces &amp; districts, Rwanda
+          prefectures, DRC 1997–2015 provinces, South Sudan 2015 states,
+          Tanzania new regions, Uganda kingdoms. Historical names for ~60 major
+          cities across pre-colonial, colonial, and post-independence eras.
+        </p>
+      </div>
+    </section>
+
+    <!-- EXPLORE -->
+    <section id="try-it">
+      <div class="container">
+        <div class="explorer">
+          <h2>Explore Divisions</h2>
+          <p class="subtitle">
+            Pick a country and drill down through its administrative hierarchy
+          </p>
+
+          <div class="country-pills" id="country-pills"></div>
+          <div id="breadcrumb" class="explorer-crumbs"></div>
+          <div class="cascade" id="cascade"></div>
+
+          <div id="results-info" class="results-info"></div>
+          <div id="results-grid" class="results-grid">
+            <div class="explorer-empty">
+              <div class="icon">🌍</div>
+              <p>Select a country to start exploring</p>
+            </div>
+          </div>
+
+          <div id="api-url-bar" class="api-url-bar"></div>
+          <div id="json-toggle" class="json-toggle">
+            <button class="json-toggle-btn" onclick="toggleJson()">
+              Show JSON Response
+            </button>
+            <div id="json-body" class="json-body"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE SAMPLES -->
+    <section id="code">
+      <div class="container">
+        <h2>Quick Start</h2>
+        <p class="subtitle">Drop-in code for any language</p>
+        <div class="code-tabs">
+          <div class="code-tab active" onclick="showTab('curl', event)">
+            curl
+          </div>
+          <div class="code-tab" onclick="showTab('python', event)">Python</div>
+          <div class="code-tab" onclick="showTab('javascript', event)">
+            JavaScript
+          </div>
+        </div>
+        <div class="code-block active" id="tab-curl">
+          <pre><span class="comment"># List all countries</span>
+curl https://api.mipaka.dev/api/v1/countries/
+
+<span class="comment"># Kenya counties</span>
+curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/?country=KE&level=1"</span>
+
+<span class="comment"># Search by historical name</span>
+curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/?name=Léopoldville"</span>
+
+<span class="comment"># Export as CSV</span>
+curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/export/?country=KE"</span> -o kenya.csv</pre>
+        </div>
+        <div class="code-block" id="tab-python">
+          <pre><span class="keyword">import</span> requests
+
+<span class="comment"># List Kenya counties</span>
+response = requests.get(
+    <span class="string">"https://api.mipaka.dev/api/v1/divisions/"</span>,
+    params={<span class="string">"country"</span>: <span class="string">"KE"</span>, <span class="string">"level"</span>: 1}
+)
+counties = response.json()[<span class="string">"results"</span>]
+
+<span class="keyword">for</span> county <span class="keyword">in</span> counties:
+    print(f<span class="string">"{county['name']} — {county['children_count']} constituencies"</span>)
+
+<span class="comment"># Search historical names</span>
+names = requests.get(
+    <span class="string">"https://api.mipaka.dev/api/v1/names/"</span>,
+    params={<span class="string">"name_type"</span>: <span class="string">"indigenous"</span>, <span class="string">"country"</span>: <span class="string">"UG"</span>}
+).json()</pre>
+        </div>
+        <div class="code-block" id="tab-javascript">
+          <pre><span class="comment">// List Kenya counties</span>
+<span class="keyword">const</span> res = <span class="keyword">await</span> fetch(
+  <span class="string">"https://api.mipaka.dev/api/v1/divisions/?country=KE&level=1"</span>
+);
+<span class="keyword">const</span> { results } = <span class="keyword">await</span> res.json();
+
+results.forEach(county =>
+  console.log(<span class="string">`${county.name} — ${county.children_count} constituencies`</span>)
+);
+
+<span class="comment">// Search by historical name</span>
+<span class="keyword">const</span> historical = <span class="keyword">await</span> fetch(
+  <span class="string">"https://api.mipaka.dev/api/v1/divisions/?name=Léopoldville"</span>
+).then(r => r.json());</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section>
+      <div class="container">
+        <div class="cta-grid">
+          <a
+            href="https://api.mipaka.dev/api/docs/"
+            target="_blank"
+            class="cta-card"
+          >
+            <div class="icon">📖</div>
+            <h3>API Documentation</h3>
+            <p>Interactive Swagger UI — try every endpoint in your browser</p>
+            <span class="btn btn-outline">Open Docs</span>
+          </a>
+          <a
+            href="https://rapidapi.com/ceddyville/api/mipaka"
+            target="_blank"
+            class="cta-card"
+          >
+            <div class="icon">⚡</div>
+            <h3>RapidAPI</h3>
+            <p>Get your API key and start building in minutes</p>
+            <span class="btn btn-primary">Get API Key</span>
+          </a>
+          <a
+            href="https://github.com/ceddyville/mipaka-api"
+            target="_blank"
+            class="cta-card"
+          >
+            <div class="icon">🛠</div>
+            <h3>Open Source</h3>
+            <p>MIT licensed — contribute data, report issues, or self-host</p>
+            <span class="btn btn-outline">View on GitHub</span>
+          </a>
+          <a
+            href="https://buymeacoffee.com/ceddyville"
+            target="_blank"
+            class="cta-card"
+          >
+            <div class="icon">☕</div>
+            <h3>Support</h3>
+            <p>Help keep the API free and the data growing</p>
+            <span class="btn btn-outline">Buy Me a Coffee</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <p>Built with ❤️ for the African developer community</p>
+        <p class="swahili">
+          "Mipaka ni zaidi ya mistari kwenye ramani." — Boundaries are more than
+          lines on a map.
+        </p>
+        <div class="links">
+          <a href="https://github.com/ceddyville/mipaka-api">GitHub</a>
+          <a href="https://api.mipaka.dev/api/docs/">Docs</a>
+          <a href="https://rapidapi.com/ceddyville/api/mipaka">RapidAPI</a>
+          <a href="https://buymeacoffee.com/ceddyville">Support</a>
+        </div>
+        <p style="margin-top: 16px">
+          MIT License · Built by
+          <a href="https://github.com/ceddyville">Cedric Ongoro</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const API =
+        location.hostname === "localhost" || location.hostname === "127.0.0.1"
+          ? "http://localhost:8000"
+          : "https://api.mipaka.dev";
+      const FLAGS = {
+        KE: "\u{1F1F0}\u{1F1EA}",
+        TZ: "\u{1F1F9}\u{1F1FF}",
+        UG: "\u{1F1FA}\u{1F1EC}",
+        RW: "\u{1F1F7}\u{1F1FC}",
+        BI: "\u{1F1E7}\u{1F1EE}",
+        CD: "\u{1F1E8}\u{1F1E9}",
+        SS: "\u{1F1F8}\u{1F1F8}",
+      };
+
+      let countries = [];
+      let selectedCountry = null;
+      // Each entry: { levelNum, levelName, items[], selectedId, selectedName }
+      let cascade = [];
+      let lastApiUrl = "";
+      let lastJsonData = null;
+
+      async function apiFetch(path) {
+        lastApiUrl = path;
+        const res = await fetch(API + path);
+        const data = await res.json();
+        // countries endpoint is paginated, top/children return direct arrays
+        lastJsonData = data;
+        return data.results || data;
+      }
+
+      async function init() {
+        try {
+          const data = await apiFetch("/api/v1/countries/");
+          countries = data;
+          renderCountryPills();
+        } catch (e) {
+          document.getElementById("results-grid").innerHTML =
+            '<div class="explorer-empty"><div class="icon">&#x26A0;</div><p>Could not connect to API</p></div>';
+        }
+      }
+
+      function renderCountryPills() {
+        const el = document.getElementById("country-pills");
+        el.innerHTML = countries
+          .map(
+            (c) =>
+              `<div class="country-pill${selectedCountry && selectedCountry.code === c.code ? " active" : ""}" onclick="pickCountry('${c.code}')">` +
+              `<span>${FLAGS[c.code] || ""}</span><span>${c.name}</span></div>`,
+          )
+          .join("");
+      }
+
+      async function pickCountry(code) {
+        selectedCountry = countries.find((c) => c.code === code);
+        cascade = [];
+        renderCountryPills();
+        showLoading();
+
+        try {
+          const items = await apiFetch("/api/v1/countries/" + code + "/top/");
+          cascade.push({
+            levelNum: 1,
+            levelName: getLevelName(1),
+            items: items,
+            selectedId: null,
+            selectedName: "",
+          });
+          render();
+        } catch (e) {
+          document.getElementById("results-grid").innerHTML =
+            '<div class="explorer-empty"><p>Failed to load divisions</p></div>';
+        }
+      }
+
+      function getLevelName(level) {
+        if (!selectedCountry) return "Level " + level;
+        const dl = selectedCountry.division_levels.find(
+          (l) => l.level === level,
+        );
+        return dl ? dl.name : "Level " + level;
+      }
+
+      async function pickDivision(cascadeIdx, divId) {
+        divId = parseInt(divId);
+        if (!divId) {
+          // "Select..." chosen — clear this level's selection and deeper levels
+          cascade[cascadeIdx].selectedId = null;
+          cascade[cascadeIdx].selectedName = "";
+          cascade = cascade.slice(0, cascadeIdx + 1);
+          render();
+          return;
+        }
+
+        const div = cascade[cascadeIdx].items.find((d) => d.id === divId);
+        cascade[cascadeIdx].selectedId = div.id;
+        cascade[cascadeIdx].selectedName = div.name;
+        cascade = cascade.slice(0, cascadeIdx + 1);
+        render();
+
+        if (div.children_count > 0) {
+          showLoading();
+          try {
+            const children = await apiFetch(
+              "/api/v1/divisions/" + div.id + "/children/",
+            );
+            if (children.length > 0) {
+              cascade.push({
+                levelNum: children[0].level,
+                levelName:
+                  children[0].level_name || getLevelName(children[0].level),
+                items: children,
+                selectedId: null,
+                selectedName: "",
+              });
+            }
+            render();
+          } catch (e) {
+            render();
+          }
+        }
+      }
+
+      function clickResult(cascadeIdx, divId) {
+        // Find the select at this cascade index and change it, then trigger pickDivision
+        pickDivision(cascadeIdx, divId);
+      }
+
+      function render() {
+        renderCountryPills();
+        renderBreadcrumb();
+        renderCascade();
+        renderResults();
+        renderApiUrl();
+        renderJson();
+      }
+
+      function renderBreadcrumb() {
+        const el = document.getElementById("breadcrumb");
+        if (!selectedCountry) {
+          el.innerHTML = "";
+          return;
+        }
+        let html =
+          '<span class="crumb' +
+          (cascade.every((l) => !l.selectedId) ? " active" : "") +
+          '" onclick="pickCountry(\'' +
+          selectedCountry.code +
+          "')\">" +
+          (FLAGS[selectedCountry.code] || "") +
+          " " +
+          selectedCountry.name +
+          "</span>";
+        for (let i = 0; i < cascade.length; i++) {
+          if (cascade[i].selectedId) {
+            html += '<span class="sep">\u2192</span>';
+            const isLast =
+              i === cascade.length - 1 ||
+              !cascade[i + 1] ||
+              !cascade[i + 1].selectedId;
+            html +=
+              '<span class="crumb' +
+              (isLast ? " active" : "") +
+              '">' +
+              cascade[i].selectedName +
+              "</span>";
+          }
+        }
+        el.innerHTML = html;
+      }
+
+      function renderCascade() {
+        const el = document.getElementById("cascade");
+        if (cascade.length === 0) {
+          el.innerHTML = "";
+          return;
+        }
+        el.innerHTML = cascade
+          .map((level, idx) => {
+            const options = level.items
+              .map(
+                (d) =>
+                  '<option value="' +
+                  d.id +
+                  '"' +
+                  (d.id === level.selectedId ? " selected" : "") +
+                  ">" +
+                  d.name +
+                  (d.children_count > 0 ? " (" + d.children_count + ")" : "") +
+                  "</option>",
+              )
+              .join("");
+            return (
+              '<div class="cascade-col"><label>' +
+              level.levelName +
+              "</label>" +
+              '<select class="cascade-select" onchange="pickDivision(' +
+              idx +
+              ', this.value)">' +
+              '<option value="">Select ' +
+              level.levelName +
+              "...</option>" +
+              options +
+              "</select></div>"
+            );
+          })
+          .join("");
+      }
+
+      function renderResults() {
+        const grid = document.getElementById("results-grid");
+        const info = document.getElementById("results-info");
+        if (cascade.length === 0) {
+          info.innerHTML = "";
+          grid.innerHTML =
+            '<div class="explorer-empty"><div class="icon">\u{1F30D}</div><p>Select a country to start exploring</p></div>';
+          return;
+        }
+
+        const deepest = cascade[cascade.length - 1];
+        const items = deepest.items;
+        const levelName = deepest.levelName;
+        const hasChildren = items.some((d) => d.children_count > 0);
+
+        info.innerHTML =
+          "<h3>" +
+          levelName +
+          's</h3><span class="count">' +
+          items.length +
+          (items.length === 1 ? " result" : " results") +
+          "</span>";
+
+        grid.innerHTML = items
+          .map((d) => {
+            const sel = d.id === deepest.selectedId ? " selected" : "";
+            const leaf = d.children_count === 0 ? " leaf" : "";
+            const click =
+              d.children_count > 0
+                ? ' onclick="clickResult(' +
+                  (cascade.length - 1) +
+                  ", " +
+                  d.id +
+                  ')"'
+                : "";
+            const meta =
+              d.children_count > 0
+                ? d.children_count +
+                  " sub-division" +
+                  (d.children_count !== 1 ? "s" : "")
+                : "No sub-divisions";
+            const codePart = d.code ? " \u00B7 " + d.code : "";
+            return (
+              '<div class="result-item' +
+              sel +
+              leaf +
+              '"' +
+              click +
+              ">" +
+              '<div class="rname">' +
+              d.name +
+              "</div>" +
+              '<div class="rmeta">' +
+              meta +
+              codePart +
+              "</div></div>"
+            );
+          })
+          .join("");
+      }
+
+      function renderApiUrl() {
+        const el = document.getElementById("api-url-bar");
+        if (lastApiUrl && selectedCountry) {
+          el.innerHTML = '<span class="method">GET</span> ' + lastApiUrl;
+          el.classList.add("visible");
+        } else {
+          el.classList.remove("visible");
+        }
+      }
+
+      function renderJson() {
+        const toggle = document.getElementById("json-toggle");
+        if (lastJsonData && selectedCountry) {
+          toggle.classList.add("visible");
+          document.getElementById("json-body").textContent = JSON.stringify(
+            lastJsonData,
+            null,
+            2,
+          );
+        } else {
+          toggle.classList.remove("visible");
+        }
+      }
+
+      function toggleJson() {
+        const body = document.getElementById("json-body");
+        const btn = document.querySelector(".json-toggle-btn");
+        body.classList.toggle("visible");
+        btn.textContent = body.classList.contains("visible")
+          ? "Hide JSON Response"
+          : "Show JSON Response";
+      }
+
+      function showLoading() {
+        document.getElementById("results-grid").innerHTML =
+          '<div class="explorer-empty"><div class="spinner"></div> Loading...</div>';
+        document.getElementById("results-info").innerHTML = "";
+      }
+
+      function showTab(name, ev) {
+        document
+          .querySelectorAll(".code-tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".code-block")
+          .forEach((b) => b.classList.remove("active"));
+        ev.target.classList.add("active");
+        document.getElementById("tab-" + name).classList.add("active");
+      }
+
+      // Boot
+      init();
+    </script>
+  </body>
+</html>
