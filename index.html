@@ -6,915 +6,1809 @@
     <title>Mipaka — Every Border. One API.</title>
     <meta
       name="description"
-      content="Free REST API for administrative divisions across 7 East &amp; Central African countries. Counties, regions, districts, wards, villages — normalized through a single interface."
+      content="Free REST API for administrative divisions across 7 East & Central African countries."
     />
-    <meta
-      name="keywords"
-      content="API, Africa, Kenya, counties, administrative divisions, REST API, open source"
-    />
-    <meta property="og:title" content="Mipaka — Every Border. One API." />
-    <meta
-      property="og:description"
-      content="Free REST API for administrative divisions across 7 East &amp; Central African countries."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mipaka.dev" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=Karla:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
     />
     <style>
-      :root {
-        --bg: #0f1117;
-        --bg-card: #161822;
-        --border: #2a2d3a;
-        --text: #e2e4e9;
-        --text-muted: #8b8fa3;
-        --accent: #c8622a;
-        --accent-light: #e8b86d;
-        --accent-hover: #d4742f;
-        --code-bg: #1a1d2b;
-        --success: #4ade80;
-        --warning: #fbbf24;
-      }
-
-      * {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+      }
+
+      :root {
+        /* East African Palette:
+     Maasai red      — shuka, blood soil, Mt Kenya lava
+     Indian Ocean    — Swahili coast teal, Zanzibar water
+     Laterite ochre  — red African soil baked in equatorial sun
+     Acacia gold     — dry savanna grass, Serengeti noon light
+     Rift Valley ink — night sky above Nakuru, deep indigo-black */
+        --earth: #b83225;
+        --earth-mid: #d94f35;
+        --ocean: #0d8c7e;
+        --ocean-lt: #12b8a6;
+        --laterite: #c4720e;
+        --gold: #e8b030;
+        --gold-lt: #f5cc60;
+        --night: #070a10;
+        --ink: #0e1219;
+        --card: #141820;
+        --card2: #1a1f2b;
+        --border: rgba(184, 50, 37, 0.22);
+        --border2: rgba(13, 140, 126, 0.15);
+        --mist: #f5f0e6;
+        --chalk: #fdfaf4;
+        --accent: #0d8c7e;
+        --dim: #4a5468;
+        --glow: rgba(184, 50, 37, 0.18);
+      }
+
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
+        background: var(--night);
+        color: var(--mist);
         font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
+          "Karla",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        overflow-x: hidden;
+        cursor: default;
       }
 
-      a {
-        color: var(--accent-light);
-        text-decoration: none;
-      }
-      a:hover {
-        color: var(--accent-hover);
-      }
-
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px;
+      /* ── GRAIN OVERLAY ── */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+        opacity: 0.4;
       }
 
-      /* ── NAV ─────────────────────────────────── */
+      /* ── ANIMATED BG GRID ── */
+      .bg-grid {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(184, 50, 37, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(184, 50, 37, 0.05) 1px, transparent 1px);
+        background-size: 80px 80px;
+        animation: gridDrift 60s linear infinite;
+      }
+      @keyframes gridDrift {
+        to {
+          background-position: 80px 80px;
+        }
+      }
+
+      .bg-orb {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(80px);
+      }
+      .orb1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(184, 50, 37, 0.14),
+          transparent 70%
+        );
+        top: -200px;
+        right: -100px;
+        animation: orbFloat 20s ease-in-out infinite;
+      }
+      .orb2 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(13, 140, 126, 0.1),
+          transparent 70%
+        );
+        bottom: -100px;
+        left: -100px;
+        animation: orbFloat 25s ease-in-out infinite reverse;
+      }
+      .orb3 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(232, 176, 48, 0.08),
+          transparent 70%
+        );
+        top: 40%;
+        left: 50%;
+        animation: orbFloat 18s ease-in-out infinite 5s;
+      }
+      @keyframes orbFloat {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(30px, -40px);
+        }
+      }
+
+      /* ── NAV ── */
       nav {
-        border-bottom: 1px solid var(--border);
-        padding: 16px 0;
-        position: sticky;
+        position: fixed;
         top: 0;
-        background: var(--bg);
+        left: 0;
+        right: 0;
         z-index: 100;
-        backdrop-filter: blur(8px);
-      }
-      nav .container {
+        padding: 1rem 2.5rem;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: center;
-      }
-      nav .logo {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--accent-light);
-        letter-spacing: 2px;
-      }
-      nav .links {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-      }
-      nav .links a {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-      }
-      nav .links a:hover {
-        color: var(--text);
-      }
-      .btn {
-        display: inline-block;
-        padding: 8px 20px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-      }
-      .btn-primary {
-        background: var(--accent);
-        color: #fff;
-      }
-      .btn-primary:hover {
-        background: var(--accent-hover);
-        color: #fff;
-      }
-      .btn-outline {
-        border: 1px solid var(--border);
-        color: var(--text);
-      }
-      .btn-outline:hover {
-        border-color: var(--accent-light);
-        color: var(--accent-light);
-      }
-
-      /* ── HERO ────────────────────────────────── */
-      .hero {
-        text-align: center;
-        padding: 80px 0 60px;
-      }
-      .hero-ascii {
-        font-family: "Courier New", monospace;
-        font-size: clamp(0.45rem, 1.8vw, 0.85rem);
-        color: var(--accent);
-        line-height: 1.2;
-        margin-bottom: 24px;
-        white-space: pre;
-        display: inline-block;
-      }
-      .hero h1 {
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
-        margin-bottom: 12px;
-        color: var(--text);
-      }
-      .hero h1 span {
-        color: var(--accent-light);
-      }
-      .hero p {
-        font-size: 1.15rem;
-        color: var(--text-muted);
-        max-width: 600px;
-        margin: 0 auto 32px;
-      }
-      .hero-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .badge-row {
-        margin-top: 32px;
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .badge-row img {
-        height: 22px;
-      }
-
-      /* ── COVERAGE TABLE ──────────────────────── */
-      section {
-        padding: 60px 0;
-      }
-      section h2 {
-        font-size: 1.6rem;
-        margin-bottom: 8px;
-        text-align: center;
-      }
-      section .subtitle {
-        text-align: center;
-        color: var(--text-muted);
-        margin-bottom: 32px;
-      }
-      .table-wrap {
-        overflow-x: auto;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        padding: 12px 16px;
-        text-align: left;
         border-bottom: 1px solid var(--border);
+        background: rgba(7, 10, 16, 0.88);
+        backdrop-filter: blur(20px);
       }
-      th {
-        background: var(--code-bg);
-        color: var(--text-muted);
-        font-size: 0.8rem;
+      .nav-logo {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: #e8b030 !important;
+        letter-spacing: 0.05em;
+        text-shadow: 0 0 30px rgba(232, 176, 48, 0.3);
+      }
+      .nav-logo em {
+        color: #b83225 !important;
+        font-style: normal;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      .nav-links a {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        color: rgba(240, 236, 228, 0.5);
+        text-decoration: none;
+        transition: color 0.2s;
       }
-      td {
-        font-size: 0.95rem;
+      .nav-links a:hover {
+        color: var(--gold);
       }
-      tr:last-child td {
-        border-bottom: none;
+      .nav-cta {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: var(--earth);
+        color: #fff;
+        padding: 0.5rem 1.2rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
       }
-      .status-complete {
-        color: var(--success);
-      }
-      .status-partial {
-        color: var(--warning);
+      .nav-cta:hover {
+        background: var(--earth-mid);
+        color: #fff;
       }
 
-      /* ── EXPLORER ────────────────────────────── */
-      .explorer {
-        background: var(--bg-card);
-        border-radius: 12px;
-        padding: 32px;
+      /* ── MAASAI STRIPE ── */
+      .maasai-stripe {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--earth) 0%,
+          var(--earth) 33%,
+          var(--gold) 33%,
+          var(--gold) 50%,
+          var(--ocean) 50%,
+          var(--ocean) 66%,
+          var(--earth) 66%,
+          var(--earth) 100%
+        );
+        opacity: 0.6;
       }
+
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 8rem 2rem 0;
+        overflow: hidden;
+      }
+
+      .hero-kicker {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--laterite);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        animation: fadeUp 0.8s ease both;
+      }
+      .hero-kicker::before,
+      .hero-kicker::after {
+        content: "";
+        display: block;
+        width: 50px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--earth),
+          var(--gold),
+          var(--ocean)
+        );
+      }
+
+      .hero-title {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: clamp(3.5rem, 9vw, 7rem);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        color: var(--chalk);
+        margin-bottom: 1rem;
+        animation: fadeUp 0.8s 0.15s ease both;
+      }
+      .hero-title .accent {
+        color: var(--gold-lt);
+        display: block;
+        text-shadow: 0 0 60px rgba(232, 176, 48, 0.25);
+      }
+      .hero-title .accent2 {
+        color: var(--earth);
+        text-shadow: 0 0 40px rgba(184, 50, 37, 0.3);
+      }
+
+      .hero-sub {
+        font-size: 1.15rem;
+        font-weight: 300;
+        color: rgba(240, 236, 228, 0.6);
+        max-width: 560px;
+        margin: 0 auto 2.5rem;
+        animation: fadeUp 0.8s 0.28s ease both;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 3rem;
+        animation: fadeUp 0.8s 0.4s ease both;
+      }
+      .btn-hero-primary {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: var(--earth);
+        color: #fff;
+        padding: 0.9rem 2rem;
+        text-decoration: none;
+        border: 2px solid var(--earth);
+        transition: all 0.25s;
+        display: inline-block;
+      }
+      .btn-hero-primary:hover {
+        background: var(--earth-mid);
+        color: #fff;
+      }
+      .btn-hero-secondary {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: transparent;
+        color: var(--mist);
+        padding: 0.9rem 2rem;
+        text-decoration: none;
+        border: 2px solid rgba(240, 236, 228, 0.2);
+        transition: all 0.25s;
+        display: inline-block;
+      }
+      .btn-hero-secondary:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      /* stats strip */
+      .hero-stats {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        animation: fadeUp 0.8s 0.55s ease both;
+        z-index: 1;
+      }
+      .stat-num {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--gold-lt);
+        line-height: 1;
+      }
+      .stat-label {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(240, 236, 228, 0.35);
+        margin-top: 0.3rem;
+      }
+
+      /* ── LIVE EXPLORER ── */
+      .explorer-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+        border-top: 1px solid var(--border);
+      }
+      .section-label {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--laterite);
+        margin-bottom: 0.8rem;
+        text-align: center;
+      }
+      .section-title {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 700;
+        color: var(--chalk);
+        text-align: center;
+        margin-bottom: 0.8rem;
+        line-height: 1.15;
+      }
+      .section-sub {
+        text-align: center;
+        color: rgba(240, 236, 228, 0.45);
+        font-size: 0.95rem;
+        font-weight: 300;
+        margin-bottom: 3rem;
+      }
+
+      /* country pills */
       .country-pills {
         display: flex;
-        gap: 8px;
         flex-wrap: wrap;
-        margin-bottom: 24px;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-bottom: 2.5rem;
       }
-      .country-pill {
-        padding: 8px 16px;
-        background: var(--code-bg);
+      .cpill {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        padding: 0.55rem 1.1rem;
         border: 1px solid var(--border);
-        border-radius: 8px;
+        background: var(--card);
+        color: rgba(240, 236, 228, 0.6);
         cursor: pointer;
-        font-size: 0.95rem;
-        color: var(--text);
         transition: all 0.2s;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
       }
-      .country-pill:hover {
-        border-color: var(--accent);
+      .cpill:hover {
+        border-color: var(--earth);
+        color: var(--mist);
       }
-      .country-pill.active {
-        border-color: var(--accent-light);
-        background: rgba(200, 98, 42, 0.15);
-        color: var(--accent-light);
+      .cpill.active {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: rgba(232, 176, 48, 0.08);
       }
-      .cascade {
+      .cpill .flag {
+        font-size: 1.1rem;
+      }
+
+      /* explorer panel */
+      .explorer-panel {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 2px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .explorer-left,
+      .explorer-right {
+        background: var(--card);
+      }
+
+      /* cascading dropdowns */
+      .cascade-panel {
+        padding: 2rem;
         display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        margin-bottom: 24px;
+        flex-direction: column;
+        gap: 1.2rem;
       }
-      .cascade-col {
-        flex: 1;
-        min-width: 180px;
-        max-width: 280px;
-      }
-      .cascade-col label {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--text-muted);
+      .cascade-panel-title {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 6px;
+        color: var(--dim);
+      }
+      .cascade-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        animation: fadeUp 0.3s ease both;
+      }
+      .cascade-label {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--laterite);
       }
       .cascade-select {
-        width: 100%;
-        padding: 10px 32px 10px 12px;
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        color: var(--text);
+        font-family: "Karla", system-ui, sans-serif;
         font-size: 0.9rem;
-        cursor: pointer;
-        -webkit-appearance: none;
-        -moz-appearance: none;
+        background: rgba(0, 0, 0, 0.3);
+        color: var(--mist);
+        border: 1px solid var(--border);
+        padding: 0.7rem 1rem;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b8fa3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        cursor: pointer;
+        transition: border-color 0.2s;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e8b030' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 12px center;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
       }
+      .cascade-select:hover,
       .cascade-select:focus {
-        border-color: var(--accent-light);
+        border-color: var(--gold);
         outline: none;
       }
       .cascade-select option {
-        background: var(--bg);
-        color: var(--text);
+        background: var(--ink);
+        color: var(--mist);
       }
-      .explorer-crumbs {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        margin-bottom: 16px;
-        font-size: 0.85rem;
-        flex-wrap: wrap;
-      }
-      .explorer-crumbs .crumb {
-        color: var(--text-muted);
-        cursor: pointer;
-      }
-      .explorer-crumbs .crumb:hover {
-        color: var(--accent-light);
-      }
-      .explorer-crumbs .crumb.active {
-        color: var(--accent-light);
-        font-weight: 600;
+      .cascade-select:disabled {
+        opacity: 0.35;
         cursor: default;
       }
-      .explorer-crumbs .sep {
-        color: var(--border);
-        user-select: none;
+
+      /* result card */
+      .result-card {
+        background: rgba(184, 50, 37, 0.06);
+        border: 1px solid var(--border);
+        padding: 1.2rem;
+        animation: fadeUp 0.3s ease both;
       }
-      .results-info {
+      .result-card-name {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--gold-lt);
+        margin-bottom: 0.4rem;
+      }
+      .result-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+      .result-card-meta .rcm {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+        color: var(--dim);
+      }
+      .result-card-meta .rcm span {
+        color: var(--ocean-lt);
+      }
+      .result-card-path {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        color: rgba(240, 236, 228, 0.4);
+        margin-top: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+      }
+      .result-card-path .rcp-sep {
+        color: var(--laterite);
+      }
+
+      /* loading shimmer */
+      .shimmer {
+        background: linear-gradient(
+          90deg,
+          var(--card) 25%,
+          rgba(184, 50, 37, 0.06) 50%,
+          var(--card) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.2s infinite;
+        height: 44px;
+        margin-bottom: 2px;
+      }
+      @keyframes shimmer {
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      /* response panel */
+      .response-panel {
+        padding: 2rem;
+      }
+      .response-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      .response-label {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .method-badge {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.08em;
+        background: rgba(13, 140, 126, 0.14);
+        border: 1px solid rgba(13, 140, 126, 0.28);
+        color: var(--accent);
+        padding: 0.2rem 0.6rem;
+      }
+      .url-bar {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        color: rgba(240, 236, 228, 0.45);
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        padding: 0.6rem 1rem;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        min-height: 2.4rem;
+      }
+      .url-bar .url-base {
+        color: var(--dim);
+      }
+      .url-bar .url-path {
+        color: var(--gold);
+      }
+      .url-bar .url-param {
+        color: var(--accent);
+      }
+
+      .json-viewer {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        line-height: 1.7;
+        color: rgba(240, 236, 228, 0.7);
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        padding: 1rem;
+        max-height: 340px;
+        overflow-y: auto;
+        white-space: pre;
+        scrollbar-width: thin;
+        scrollbar-color: var(--earth) transparent;
+      }
+      .json-key {
+        color: var(--gold-lt);
+      }
+      .json-str {
+        color: var(--ocean-lt);
+      }
+      .json-num {
+        color: var(--laterite);
+      }
+      .json-bool {
+        color: #a78bfa;
+      }
+      .json-null {
+        color: var(--dim);
+      }
+
+      /* response stats */
+      .response-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+      }
+      .rstat {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.62rem;
+        color: var(--dim);
+      }
+      .rstat span {
+        color: var(--gold);
+      }
+
+      /* ── HISTORICAL FEATURE ── */
+      .history-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+        border-top: 1px solid var(--border);
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(184, 50, 37, 0.05),
+          transparent
+        );
+      }
+      .history-grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+      }
+      .history-demo {
+        background: var(--card);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .history-demo-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--dim);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .year-slider-wrap {
+        padding: 1.5rem;
+      }
+      .year-label {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.65rem;
+        color: var(--dim);
+        letter-spacing: 0.1em;
+        margin-bottom: 0.5rem;
+      }
+      .year-value {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--gold-lt);
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+      input[type="range"] {
+        width: 100%;
+        appearance: none;
+        height: 3px;
+        background: linear-gradient(90deg, var(--earth) 0%, var(--border) 0%);
+        outline: none;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--laterite);
+        border: 2px solid var(--gold-lt);
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+      }
+
+      .name-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .timeline-entry {
+        padding: 0.8rem 1rem;
+        border-left: 2px solid var(--border);
+        transition: all 0.3s;
+        opacity: 0.4;
+      }
+      .timeline-entry.active {
+        border-left-color: var(--laterite);
+        opacity: 1;
+        background: rgba(184, 50, 37, 0.08);
+      }
+      .te-era {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-bottom: 0.2rem;
+      }
+      .te-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--chalk);
+      }
+      .te-lang {
+        font-size: 0.8rem;
+        color: var(--laterite);
+        margin-top: 0.2rem;
+      }
+      .te-note {
+        font-size: 0.8rem;
+        color: rgba(240, 236, 228, 0.4);
+        font-weight: 300;
+        margin-top: 0.2rem;
+      }
+
+      /* city tabs */
+      .city-tab {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+        padding: 0.4rem 0.8rem;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: rgba(240, 236, 228, 0.5);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .city-tab:hover {
+        border-color: var(--earth);
+        color: var(--mist);
+      }
+      .city-tab.active {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: rgba(232, 176, 48, 0.08);
+      }
+
+      /* ── ENDPOINTS GRID ── */
+      .endpoints-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+        border-top: 1px solid var(--border);
+      }
+      .endpoints-grid {
+        max-width: 1100px;
+        margin: 2rem auto 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .endpoint-row {
+        background: var(--card);
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        transition: background 0.2s;
+        cursor: default;
+      }
+      .endpoint-row:hover {
+        background: rgba(184, 50, 37, 0.06);
+      }
+      .ep-method {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.06em;
+        background: rgba(13, 140, 126, 0.12);
+        border: 1px solid rgba(13, 140, 126, 0.22);
+        color: var(--accent);
+        padding: 0.2rem 0.55rem;
+        flex-shrink: 0;
+        margin-top: 0.15rem;
+      }
+      .ep-path {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        color: var(--gold-lt);
+        margin-bottom: 0.25rem;
+        word-break: break-all;
+      }
+      .ep-desc {
+        font-size: 0.85rem;
+        color: rgba(240, 236, 228, 0.45);
+        font-weight: 300;
+      }
+
+      /* ── COVERAGE ── */
+      .coverage-section {
+        position: relative;
+        z-index: 1;
+        padding: 5rem 2rem;
+        border-top: 1px solid var(--border);
+      }
+      .coverage-grid {
+        max-width: 900px;
+        margin: 2rem auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .coverage-card {
+        background: var(--card);
+        padding: 1.8rem;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.2s;
+      }
+      .coverage-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--earth),
+          var(--laterite),
+          var(--gold)
+        );
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s;
+      }
+      .coverage-card:hover {
+        background: rgba(184, 50, 37, 0.05);
+      }
+      .coverage-card:hover::before {
+        transform: scaleX(1);
+      }
+      .cc-flag {
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        line-height: 1;
+      }
+      .cc-name {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--chalk);
+        margin-bottom: 0.2rem;
+        display: flex;
+        align-items: center;
+      }
+      .cc-code {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.12em;
+        color: var(--earth);
+        margin-bottom: 0.8rem;
+      }
+      .cc-levels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+      .level-tag {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.58rem;
+        letter-spacing: 0.06em;
+        background: rgba(184, 50, 37, 0.12);
+        border: 1px solid rgba(184, 50, 37, 0.22);
+        color: var(--gold);
+        padding: 0.15rem 0.45rem;
+      }
+      .level-tag.partial {
+        background: rgba(232, 176, 48, 0.06);
+        border-color: rgba(232, 184, 109, 0.2);
+        color: rgba(232, 184, 109, 0.6);
+      }
+
+      /* ── OSS STRIP ── */
+      .oss-section {
+        position: relative;
+        z-index: 1;
+        padding: 4rem 2rem;
+        border-top: 1px solid var(--border);
+        background: rgba(184, 50, 37, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .oss-text h3 {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--gold-lt);
+        margin-bottom: 0.4rem;
+      }
+      .oss-text p {
+        font-size: 0.95rem;
+        color: rgba(240, 236, 228, 0.5);
+        font-weight: 300;
+      }
+      .github-link {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 2px solid var(--ocean);
+        color: var(--ocean-lt);
+        padding: 0.8rem 1.8rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+      }
+      .github-link:hover {
+        background: var(--ocean);
+        color: #fff;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid var(--border);
+        padding: 2.5rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 1rem;
       }
-      .results-info h3 {
-        font-size: 1rem;
+      .footer-logo {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: 1.1rem;
+        font-weight: 900;
+        color: var(--gold-lt);
       }
-      .results-info .count {
-        color: var(--text-muted);
-        font-size: 0.85rem;
+      .footer-logo em {
+        color: var(--earth);
+        font-style: normal;
       }
-      .results-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 8px;
-      }
-      .result-item {
-        padding: 12px 16px;
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .result-item:hover {
-        border-color: var(--accent);
-        transform: translateY(-1px);
-      }
-      .result-item.selected {
-        border-color: var(--accent-light);
-        background: rgba(200, 98, 42, 0.1);
-      }
-      .result-item.leaf {
-        cursor: default;
-      }
-      .result-item.leaf:hover {
-        transform: none;
-      }
-      .result-item .rname {
-        font-weight: 500;
-        font-size: 0.9rem;
-      }
-      .result-item .rmeta {
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        margin-top: 4px;
-      }
-      .explorer-empty {
-        text-align: center;
-        padding: 40px;
-        color: var(--text-muted);
-        grid-column: 1 / -1;
-      }
-      .explorer-empty .icon {
-        font-size: 2rem;
-        margin-bottom: 8px;
-      }
-      .api-url-bar {
-        margin-top: 16px;
-        padding: 8px 12px;
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-family: "Courier New", monospace;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        overflow-x: auto;
-        display: none;
-      }
-      .api-url-bar.visible {
-        display: block;
-      }
-      .api-url-bar .method {
-        color: var(--success);
-        font-weight: 600;
-      }
-      .json-toggle {
-        margin-top: 12px;
-        display: none;
-      }
-      .json-toggle.visible {
-        display: block;
-      }
-      .json-toggle-btn {
-        background: none;
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        padding: 4px 12px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        cursor: pointer;
-        margin-bottom: 8px;
-      }
-      .json-toggle-btn:hover {
-        border-color: var(--accent-light);
-        color: var(--accent-light);
-      }
-      .json-body {
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 16px;
-        font-family: "Courier New", monospace;
-        font-size: 0.8rem;
-        color: var(--accent-light);
-        max-height: 300px;
-        overflow-y: auto;
-        white-space: pre-wrap;
-        word-break: break-word;
-        display: none;
-      }
-      .json-body.visible {
-        display: block;
-      }
-
-      /* ── CODE SAMPLES ────────────────────────── */
-      .code-tabs {
-        display: flex;
-        gap: 0;
-        margin-bottom: 0;
-      }
-      .code-tab {
-        padding: 8px 20px;
-        background: var(--code-bg);
-        border: 1px solid var(--border);
-        border-bottom: none;
-        cursor: pointer;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        border-radius: 8px 8px 0 0;
-        transition: all 0.2s;
-      }
-      .code-tab.active {
-        background: var(--bg-card);
-        color: var(--accent-light);
-        border-bottom-color: var(--bg-card);
-      }
-      .code-block {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 0 8px 8px 8px;
-        padding: 20px;
-        display: none;
-      }
-      .code-block.active {
-        display: block;
-      }
-      .code-block pre {
-        font-family: "Courier New", monospace;
-        font-size: 0.85rem;
-        color: var(--text);
-        overflow-x: auto;
-        white-space: pre;
-      }
-      .code-block .comment {
-        color: var(--text-muted);
-      }
-      .code-block .string {
-        color: var(--success);
-      }
-      .code-block .keyword {
-        color: var(--accent-light);
-      }
-
-      /* ── CTA CARDS ───────────────────────────── */
-      .cta-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 16px;
-      }
-      .cta-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 24px;
-        text-align: center;
-        transition: border-color 0.2s;
-      }
-      .cta-card:hover {
-        border-color: var(--accent);
-      }
-      .cta-card .icon {
-        font-size: 2rem;
-        margin-bottom: 12px;
-      }
-      .cta-card h3 {
-        font-size: 1rem;
-        margin-bottom: 8px;
-      }
-      .cta-card p {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin-bottom: 16px;
-      }
-
-      /* ── FOOTER ──────────────────────────────── */
-      footer {
-        border-top: 1px solid var(--border);
-        padding: 40px 0;
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-      }
-      footer .swahili {
+      .footer-swahili {
         font-style: italic;
-        color: var(--accent-light);
-        margin-top: 8px;
+        font-size: 0.85rem;
+        color: rgba(240, 236, 228, 0.3);
       }
-      footer .links {
-        margin-top: 16px;
+      .footer-links {
         display: flex;
-        gap: 24px;
-        justify-content: center;
+        gap: 1.5rem;
+      }
+      .footer-links a {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(240, 236, 228, 0.3);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--gold);
       }
 
-      /* ── LOADING SPINNER ─────────────────────── */
-      .spinner {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        border: 2px solid var(--text-muted);
-        border-top-color: var(--accent-light);
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-        vertical-align: middle;
-        margin-right: 6px;
-      }
-      @keyframes spin {
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
         to {
-          transform: rotate(360deg);
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        nav {
+          padding: 1rem 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hero {
+          padding: 7rem 1.5rem 6rem;
+        }
+        .hero-stats {
+          gap: 2rem;
+          flex-wrap: wrap;
+        }
+        .explorer-panel {
+          grid-template-columns: 1fr;
+        }
+        .history-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        .endpoints-grid {
+          grid-template-columns: 1fr;
+        }
+        .explorer-section,
+        .history-section,
+        .endpoints-section,
+        .coverage-section {
+          padding: 3rem 1.5rem;
+        }
+        .oss-section {
+          padding: 3rem 1.5rem;
+          flex-direction: column;
+        }
+        footer {
+          flex-direction: column;
+          text-align: center;
+          padding: 2rem 1.5rem;
         }
       }
     </style>
   </head>
   <body>
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <div class="bg-orb orb3"></div>
+    <div class="bg-orb orb4"></div>
+
     <!-- NAV -->
     <nav>
-      <div class="container">
-        <span class="logo">MIPAKA</span>
-        <div class="links">
-          <a href="#coverage">Coverage</a>
-          <a href="#try-it">Explore</a>
-          <a href="#code">Code</a>
-          <a
-            href="https://api.mipaka.dev/api/docs/"
-            target="_blank"
-            class="btn btn-outline"
-            >API Docs</a
-          >
-          <a
-            href="https://rapidapi.com/ceddyville/api/mipaka"
-            target="_blank"
-            class="btn btn-primary"
-            >Get API Key</a
-          >
-        </div>
+      <a href="#" class="nav-logo" style="text-decoration: none;">Mipaka<em>.</em></a>
+      <div class="nav-links">
+        <a href="#explorer">Explore</a>
+        <a href="#history">History</a>
+        <a href="#coverage">Coverage</a>
+        <a href="https://api.mipaka.dev/api/docs/" target="_blank"
+          >Docs</a
+        >
       </div>
+      <a
+        href="https://rapidapi.com/ceddyville/api/mipaka"
+        target="_blank"
+        class="nav-cta"
+        >Get API Key</a
+      >
     </nav>
 
     <!-- HERO -->
     <section class="hero">
-      <div class="container">
-        <div class="hero-ascii" aria-hidden="true">
-          ███╗ ███╗██╗██████╗ █████╗ ██╗ ██╗ █████╗ ████╗
-          ████║██║██╔══██╗██╔══██╗██║ ██╔╝██╔══██╗
-          ██╔████╔██║██║██████╔╝███████║█████╔╝ ███████║ ██║╚██╔╝██║██║██╔═══╝
-          ██╔══██║██╔═██╗ ██╔══██║ ██║ ╚═╝ ██║██║██║ ██║ ██║██║ ██╗██║ ██║ ╚═╝
-          ╚═╝╚═╝╚═╝ ╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═╝
+      <div class="hero-kicker">
+        East &amp; Central Africa · 7 Countries · 88,000+ Divisions
+      </div>
+      <h1 class="hero-title">
+        Every border.<br />
+        <span class="accent">One <span class="accent2">API.</span></span>
+      </h1>
+      <p class="hero-sub">
+        Normalized, developer-ready access to counties, regions, districts,
+        wards and villages — plus historical place names from pre-colonial
+        kingdoms to independence.
+      </p>
+      <div class="hero-actions">
+        <a href="#explorer" class="btn-hero-primary">Try it live ↓</a>
+        <a
+          href="https://api.mipaka.dev/api/docs/"
+          target="_blank"
+          class="btn-hero-secondary"
+          >API Docs</a
+        >
+        <a
+          href="https://github.com/ceddyville/mipaka-api"
+          target="_blank"
+          class="btn-hero-secondary"
+          >GitHub</a
+        >
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num" id="stat-countries">7</div>
+          <div class="stat-label">Countries</div>
         </div>
-        <h1>Every border. <span>One API.</span></h1>
-        <p>
-          Free REST API for administrative divisions across 7 East &amp; Central
-          African countries. Counties, regions, districts, wards, villages —
-          normalized through a single interface.
-        </p>
-        <div class="hero-buttons">
-          <a href="#try-it" class="btn btn-primary">Explore Live</a>
-          <a
-            href="https://api.mipaka.dev/api/docs/"
-            target="_blank"
-            class="btn btn-outline"
-            >Swagger Docs</a
-          >
-          <a
-            href="https://github.com/ceddyville/mipaka-api"
-            target="_blank"
-            class="btn btn-outline"
-            >GitHub</a
-          >
+        <div>
+          <div class="stat-num">88K+</div>
+          <div class="stat-label">Divisions</div>
         </div>
-        <div class="badge-row">
-          <img
-            src="https://img.shields.io/badge/License-MIT-c8622a.svg"
-            alt="MIT License"
-          />
-          <img
-            src="https://img.shields.io/badge/Python-3.11+-e8b86d.svg"
-            alt="Python"
-          />
-          <img
-            src="https://img.shields.io/badge/Countries-7-c8622a.svg"
-            alt="7 Countries"
-          />
-          <img
-            src="https://img.shields.io/badge/Records-103K+-e8b86d.svg"
-            alt="103K+ Records"
-          />
-          <img
-            src="https://img.shields.io/badge/PRs-welcome-c8622a.svg"
-            alt="PRs Welcome"
-          />
+        <div>
+          <div class="stat-num">124</div>
+          <div class="stat-label">Historical Names</div>
+        </div>
+        <div>
+          <div class="stat-num">Free</div>
+          <div class="stat-label">Open Source</div>
+        </div>
+      </div>
+      <div class="maasai-stripe"></div>
+    </section>
+
+    <!-- LIVE EXPLORER -->
+    <section class="explorer-section" id="explorer">
+      <div class="section-label">Live API Explorer</div>
+      <h2 class="section-title">
+        Explore any division.<br />See the JSON live.
+      </h2>
+      <p class="section-sub">Pick a country, then drill down level by level.</p>
+
+      <div class="country-pills" id="country-pills">
+        <div class="cpill" style="opacity: 0.4; pointer-events: none">
+          Loading countries…
+        </div>
+      </div>
+
+      <div class="explorer-panel">
+        <div class="explorer-left">
+          <div class="cascade-panel">
+            <div class="cascade-panel-title">Navigate Hierarchy</div>
+            <div id="cascade-dropdowns">
+              <div
+                style="color: var(--dim); font-size: 0.9rem; padding: 1rem 0"
+              >
+                Select a country above to start exploring
+              </div>
+            </div>
+            <div id="result-card"></div>
+          </div>
+        </div>
+        <div class="explorer-right">
+          <div class="response-panel">
+            <div class="response-header">
+              <div class="response-label">API Response</div>
+              <div class="method-badge">GET</div>
+            </div>
+            <div class="url-bar" id="url-bar">
+              <span class="url-base">https://api.mipaka.dev</span
+              ><span class="url-path">/api/v1/countries/</span>
+            </div>
+            <div class="json-viewer" id="json-viewer">
+              <span style="color: var(--dim)"
+                >// Select a country to see live API responses // Every click
+                hits the real endpoint</span
+              >
+            </div>
+            <div class="response-stats" id="response-stats"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORICAL NAMES FEATURE -->
+    <section class="history-section" id="history">
+      <div class="section-label">Historical Names</div>
+      <h2 class="section-title">Every place, every era.</h2>
+
+      <div class="history-grid" style="max-width: 1100px; margin: 0 auto">
+        <div>
+          <p
+            style="
+              font-size: 1.05rem;
+              color: rgba(240, 236, 228, 0.65);
+              font-weight: 300;
+              line-height: 1.9;
+              margin-bottom: 1.5rem;
+            "
+          >
+            A birth certificate from 1923 says
+            <em style="color: var(--gold)">"Léopoldville"</em>. A land record
+            from 1890 says
+            <em style="color: var(--gold)">"Kasozi k'Empala"</em>. Mipaka
+            resolves them both — to their modern equivalents, with full
+            historical context.
+          </p>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: rgba(240, 236, 228, 0.4);
+              font-weight: 300;
+              line-height: 1.9;
+              margin-bottom: 2rem;
+            "
+          >
+            Query by year, era type, language, or name type. Pre-colonial
+            indigenous names, colonial designations, and post-independence
+            renames — all in one API.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 0.8rem">
+            <div
+              style="
+                font-family:
+                  &quot;Space Mono&quot;, &quot;Courier New&quot;, monospace;
+                font-size: 0.72rem;
+                color: rgba(240, 236, 228, 0.5);
+                background: rgba(0, 0, 0, 0.3);
+                padding: 0.8rem 1rem;
+                border: 1px solid var(--border);
+              "
+            >
+              <span style="color: var(--accent)">GET</span>
+              /api/v1/divisions/?name=<span style="color: var(--gold)"
+                >Léopoldville</span
+              >
+            </div>
+            <div
+              style="
+                font-family:
+                  &quot;Space Mono&quot;, &quot;Courier New&quot;, monospace;
+                font-size: 0.72rem;
+                color: rgba(240, 236, 228, 0.5);
+                background: rgba(0, 0, 0, 0.3);
+                padding: 0.8rem 1rem;
+                border: 1px solid var(--border);
+              "
+            >
+              <span style="color: var(--accent)">GET</span>
+              /api/v1/divisions/<span style="color: var(--gold)"
+                >?year=1923&country=CD</span
+              >
+            </div>
+            <div
+              style="
+                font-family:
+                  &quot;Space Mono&quot;, &quot;Courier New&quot;, monospace;
+                font-size: 0.72rem;
+                color: rgba(240, 236, 228, 0.5);
+                background: rgba(0, 0, 0, 0.3);
+                padding: 0.8rem 1rem;
+                border: 1px solid var(--border);
+              "
+            >
+              <span style="color: var(--accent)">GET</span>
+              /api/v1/names/?name_type=<span style="color: var(--gold)"
+                >indigenous</span
+              >&country=UG
+            </div>
+          </div>
+        </div>
+
+        <div class="history-demo">
+          <div class="history-demo-header">
+            <span id="history-city-label">Kampala · Uganda</span>
+            <div class="live-dot"></div>
+          </div>
+          <div
+            style="
+              padding: 1rem 1.5rem 0;
+              display: flex;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+            "
+          >
+            <button class="city-tab" onclick="pickCity('bujumbura')">
+              🇧🇮 Bujumbura
+            </button>
+            <button class="city-tab" onclick="pickCity('juba')">🇸🇸 Juba</button>
+            <button class="city-tab active" onclick="pickCity('kampala')">
+              🇺🇬 Kampala
+            </button>
+            <button class="city-tab" onclick="pickCity('kinshasa')">
+              🇨🇩 Kinshasa
+            </button>
+            <button class="city-tab" onclick="pickCity('nairobi')">
+              🇰🇪 Nairobi
+            </button>
+          </div>
+          <div class="year-slider-wrap">
+            <div class="year-label">Drag to travel through time</div>
+            <div class="year-value" id="year-display">1890</div>
+            <input
+              type="range"
+              min="1200"
+              max="2025"
+              value="1890"
+              id="year-slider"
+              oninput="updateTimeline(this.value)"
+            />
+            <div class="name-timeline" id="name-timeline">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENDPOINTS -->
+    <section class="endpoints-section" id="endpoints">
+      <div class="section-label">Reference</div>
+      <h2 class="section-title">Clean, predictable endpoints.</h2>
+      <div class="endpoints-grid">
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/countries/</div>
+            <div class="ep-desc">
+              All countries with division level labels and eras
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/countries/{code}/top/</div>
+            <div class="ep-desc">Top-level divisions (counties, regions…)</div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/countries/{code}/eras/</div>
+            <div class="ep-desc">
+              Historical eras for a country, chronologically
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/divisions/</div>
+            <div class="ep-desc">
+              List divisions — filter by country, level, parent, q
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/divisions/{id}/</div>
+            <div class="ep-desc">Detail with full ancestry + children</div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/divisions/{id}/names/</div>
+            <div class="ep-desc">All historical names across eras</div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/divisions/?year=1923</div>
+            <div class="ep-desc">
+              Divisions as they were named in a given year
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/eras/</div>
+            <div class="ep-desc">
+              All historical eras — filter by era_type, colonial_power
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/names/</div>
+            <div class="ep-desc">
+              Search historical names by language, type, year
+            </div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/names/?name_type=indigenous</div>
+            <div class="ep-desc">Pre-colonial indigenous names only</div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/api/v1/divisions/?name=Stanleyville</div>
+            <div class="ep-desc">Find modern division by historical name</div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <span class="ep-method">GET</span>
+          <div>
+            <div class="ep-path">/health/</div>
+            <div class="ep-desc">Health check → {"status": "ok"}</div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- COVERAGE -->
-    <section id="coverage">
-      <div class="container">
-        <h2>Coverage</h2>
-        <p class="subtitle">
-          103,000+ divisions across 7 countries + 229 historical records
-        </p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Country</th>
-                <th>Levels</th>
-                <th>Records</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>🇰🇪 Kenya</td>
-                <td>County → Constituency → Ward</td>
-                <td>1,954</td>
-                <td class="status-complete">✓ Complete</td>
-              </tr>
-              <tr>
-                <td>🇹🇿 Tanzania</td>
-                <td>Region → District</td>
-                <td>213</td>
-                <td class="status-partial">⚠ Partial</td>
-              </tr>
-              <tr>
-                <td>🇺🇬 Uganda</td>
-                <td>
-                  Region → District → County → Sub-county → Parish → Village
-                </td>
-                <td>83,017</td>
-                <td class="status-complete">✓ Complete</td>
-              </tr>
-              <tr>
-                <td>🇷🇼 Rwanda</td>
-                <td>Province → District → Sector → Cell → Village</td>
-                <td>17,453</td>
-                <td class="status-complete">✓ Complete</td>
-              </tr>
-              <tr>
-                <td>🇧🇮 Burundi</td>
-                <td>Province → Commune → Colline</td>
-                <td>491</td>
-                <td class="status-complete">✓ Complete</td>
-              </tr>
-              <tr>
-                <td>🇨🇩 DRC</td>
-                <td>Province → Territory</td>
-                <td>185</td>
-                <td class="status-partial">⚠ Partial</td>
-              </tr>
-              <tr>
-                <td>🇸🇸 South Sudan</td>
-                <td>State → County → Payam</td>
-                <td>110</td>
-                <td class="status-partial">⚠ Partial</td>
-              </tr>
-            </tbody>
-          </table>
+    <section class="coverage-section" id="coverage">
+      <div class="section-label">Coverage</div>
+      <h2 class="section-title">Built for the region.</h2>
+      <div class="coverage-grid" id="coverage-grid">
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/ke.svg"
+              alt="Kenya"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />Kenya
+          </div>
+          <div class="cc-code">KE · 1,954 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">County</span
+            ><span class="level-tag">Constituency</span
+            ><span class="level-tag">Ward</span>
+          </div>
         </div>
-        <p class="subtitle" style="margin-top: 16px; font-size: 0.85rem">
-          Plus historical divisions: Kenya provinces &amp; districts, Rwanda
-          prefectures, DRC 1997–2015 provinces, South Sudan 2015 states,
-          Tanzania new regions, Uganda kingdoms. Historical names for ~60 major
-          cities across pre-colonial, colonial, and post-independence eras.
-        </p>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/ug.svg"
+              alt="Uganda"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />Uganda
+          </div>
+          <div class="cc-code">UG · 83,017 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">Region</span
+            ><span class="level-tag">District</span
+            ><span class="level-tag">County</span
+            ><span class="level-tag">Sub-county</span
+            ><span class="level-tag">Parish</span
+            ><span class="level-tag">Village</span>
+          </div>
+        </div>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/rw.svg"
+              alt="Rwanda"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />Rwanda
+          </div>
+          <div class="cc-code">RW · 17,453 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">Province</span
+            ><span class="level-tag">District</span
+            ><span class="level-tag">Sector</span
+            ><span class="level-tag">Cell</span
+            ><span class="level-tag">Village</span>
+          </div>
+        </div>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/tz.svg"
+              alt="Tanzania"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />Tanzania
+          </div>
+          <div class="cc-code">TZ · 213 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">Region</span
+            ><span class="level-tag">District</span
+            ><span class="level-tag partial">Ward ↗</span>
+          </div>
+        </div>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/bi.svg"
+              alt="Burundi"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />Burundi
+          </div>
+          <div class="cc-code">BI · 491 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">Province</span
+            ><span class="level-tag">Commune</span
+            ><span class="level-tag partial">Colline ↗</span>
+          </div>
+        </div>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/cd.svg"
+              alt="DR Congo"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />DR Congo
+          </div>
+          <div class="cc-code">CD · 325 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">Province</span
+            ><span class="level-tag">Territory</span
+            ><span class="level-tag partial">Secteur ↗</span>
+          </div>
+        </div>
+        <div class="coverage-card">
+          <div class="cc-name">
+            <img
+              src="https://flagicons.lipis.dev/flags/4x3/ss.svg"
+              alt="South Sudan"
+              style="
+                width: 28px;
+                height: 21px;
+                margin-right: 0.6rem;
+                vertical-align: middle;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+              "
+            />South Sudan
+          </div>
+          <div class="cc-code">SS · 110 records</div>
+          <div class="cc-levels">
+            <span class="level-tag">State</span
+            ><span class="level-tag">County</span
+            ><span class="level-tag partial">Payam ↗</span>
+          </div>
+        </div>
       </div>
+      <p
+        style="
+          text-align: center;
+          margin-top: 1.5rem;
+          font-size: 0.8rem;
+          color: var(--dim);
+        "
+      >
+        ↗ Partial — community contributions welcome.
+        <a
+          href="https://github.com/ceddyville/mipaka-api/blob/main/CONTRIBUTING.md"
+          style="color: var(--earth)"
+          >See CONTRIBUTING.md</a
+        >
+      </p>
     </section>
 
-    <!-- EXPLORE -->
-    <section id="try-it">
-      <div class="container">
-        <div class="explorer">
-          <h2>Explore Divisions</h2>
-          <p class="subtitle">
-            Pick a country and drill down through its administrative hierarchy
+    <!-- OSS STRIP -->
+    <div
+      style="
+        border-top: 1px solid var(--border);
+        position: relative;
+        z-index: 1;
+      "
+    >
+      <div class="oss-section">
+        <div class="oss-text">
+          <h3>The data belongs to everyone.</h3>
+          <p>
+            MIT licensed. Community-maintained. If you know a region — your PR
+            is worth more than any scraper.
           </p>
-
-          <div class="country-pills" id="country-pills"></div>
-          <div id="breadcrumb" class="explorer-crumbs"></div>
-          <div class="cascade" id="cascade"></div>
-
-          <div id="results-info" class="results-info"></div>
-          <div id="results-grid" class="results-grid">
-            <div class="explorer-empty">
-              <div class="icon">🌍</div>
-              <p>Select a country to start exploring</p>
-            </div>
-          </div>
-
-          <div id="api-url-bar" class="api-url-bar"></div>
-          <div id="json-toggle" class="json-toggle">
-            <button class="json-toggle-btn" onclick="toggleJson()">
-              Show JSON Response
-            </button>
-            <div id="json-body" class="json-body"></div>
-          </div>
         </div>
+        <a
+          href="https://github.com/ceddyville/mipaka-api"
+          target="_blank"
+          class="github-link"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
+            />
+          </svg>
+          View on GitHub
+        </a>
       </div>
-    </section>
-
-    <!-- CODE SAMPLES -->
-    <section id="code">
-      <div class="container">
-        <h2>Quick Start</h2>
-        <p class="subtitle">Drop-in code for any language</p>
-        <div class="code-tabs">
-          <div class="code-tab active" onclick="showTab('curl', event)">
-            curl
-          </div>
-          <div class="code-tab" onclick="showTab('python', event)">Python</div>
-          <div class="code-tab" onclick="showTab('javascript', event)">
-            JavaScript
-          </div>
-        </div>
-        <div class="code-block active" id="tab-curl">
-          <pre><span class="comment"># List all countries</span>
-curl https://api.mipaka.dev/api/v1/countries/
-
-<span class="comment"># Kenya counties</span>
-curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/?country=KE&level=1"</span>
-
-<span class="comment"># Search by historical name</span>
-curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/?name=Léopoldville"</span>
-
-<span class="comment"># Export as CSV</span>
-curl <span class="string">"https://api.mipaka.dev/api/v1/divisions/export/?country=KE"</span> -o kenya.csv</pre>
-        </div>
-        <div class="code-block" id="tab-python">
-          <pre><span class="keyword">import</span> requests
-
-<span class="comment"># List Kenya counties</span>
-response = requests.get(
-    <span class="string">"https://api.mipaka.dev/api/v1/divisions/"</span>,
-    params={<span class="string">"country"</span>: <span class="string">"KE"</span>, <span class="string">"level"</span>: 1}
-)
-counties = response.json()[<span class="string">"results"</span>]
-
-<span class="keyword">for</span> county <span class="keyword">in</span> counties:
-    print(f<span class="string">"{county['name']} — {county['children_count']} constituencies"</span>)
-
-<span class="comment"># Search historical names</span>
-names = requests.get(
-    <span class="string">"https://api.mipaka.dev/api/v1/names/"</span>,
-    params={<span class="string">"name_type"</span>: <span class="string">"indigenous"</span>, <span class="string">"country"</span>: <span class="string">"UG"</span>}
-).json()</pre>
-        </div>
-        <div class="code-block" id="tab-javascript">
-          <pre><span class="comment">// List Kenya counties</span>
-<span class="keyword">const</span> res = <span class="keyword">await</span> fetch(
-  <span class="string">"https://api.mipaka.dev/api/v1/divisions/?country=KE&level=1"</span>
-);
-<span class="keyword">const</span> { results } = <span class="keyword">await</span> res.json();
-
-results.forEach(county =>
-  console.log(<span class="string">`${county.name} — ${county.children_count} constituencies`</span>)
-);
-
-<span class="comment">// Search by historical name</span>
-<span class="keyword">const</span> historical = <span class="keyword">await</span> fetch(
-  <span class="string">"https://api.mipaka.dev/api/v1/divisions/?name=Léopoldville"</span>
-).then(r => r.json());</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section>
-      <div class="container">
-        <div class="cta-grid">
-          <a
-            href="https://api.mipaka.dev/api/docs/"
-            target="_blank"
-            class="cta-card"
-          >
-            <div class="icon">📖</div>
-            <h3>API Documentation</h3>
-            <p>Interactive Swagger UI — try every endpoint in your browser</p>
-            <span class="btn btn-outline">Open Docs</span>
-          </a>
-          <a
-            href="https://rapidapi.com/ceddyville/api/mipaka"
-            target="_blank"
-            class="cta-card"
-          >
-            <div class="icon">⚡</div>
-            <h3>RapidAPI</h3>
-            <p>Get your API key and start building in minutes</p>
-            <span class="btn btn-primary">Get API Key</span>
-          </a>
-          <a
-            href="https://github.com/ceddyville/mipaka-api"
-            target="_blank"
-            class="cta-card"
-          >
-            <div class="icon">🛠</div>
-            <h3>Open Source</h3>
-            <p>MIT licensed — contribute data, report issues, or self-host</p>
-            <span class="btn btn-outline">View on GitHub</span>
-          </a>
-          <a
-            href="https://buymeacoffee.com/ceddyville"
-            target="_blank"
-            class="cta-card"
-          >
-            <div class="icon">☕</div>
-            <h3>Support</h3>
-            <p>Help keep the API free and the data growing</p>
-            <span class="btn btn-outline">Buy Me a Coffee</span>
-          </a>
-        </div>
-      </div>
-    </section>
+    </div>
 
     <!-- FOOTER -->
-    <footer>
-      <div class="container">
-        <p>Built with ❤️ for the African developer community</p>
-        <p class="swahili">
-          "Mipaka ni zaidi ya mistari kwenye ramani." — Boundaries are more than
-          lines on a map.
-        </p>
-        <div class="links">
-          <a href="https://github.com/ceddyville/mipaka-api">GitHub</a>
-          <a href="https://api.mipaka.dev/api/docs/">Docs</a>
-          <a href="https://rapidapi.com/ceddyville/api/mipaka">RapidAPI</a>
-          <a href="https://buymeacoffee.com/ceddyville">Support</a>
-        </div>
-        <p style="margin-top: 16px">
-          MIT License · Built by
-          <a href="https://github.com/ceddyville">Cedric Ongoro</a>
-        </p>
+    <footer style="position: relative; z-index: 1">
+      <a href="#" class="footer-logo" style="text-decoration: none;">Mipaka<em>.</em></a>
+      <div class="footer-swahili">
+        "Mipaka ni zaidi ya mistari kwenye ramani."
+      </div>
+      <div class="footer-links">
+        <a href="https://api.mipaka.dev/api/docs/" target="_blank">Docs</a>
+        <a href="https://github.com/ceddyville/mipaka-api" target="_blank"
+          >GitHub</a
+        >
+        <a href="https://github.com/ceddyville/mipaka-api/issues" target="_blank"
+          >Issues</a
+        >
+        <a href="https://rapidapi.com/ceddyville/api/mipaka" target="_blank"
+          >RapidAPI</a
+        >
+        <a href="mailto:hello@mipaka.dev">Contact</a>
+        <a href="https://buymeacoffee.com/ceddyville" target="_blank"
+          >Support</a
+        >
       </div>
     </footer>
 
     <script>
-      const API =
-        location.hostname === "localhost" || location.hostname === "127.0.0.1"
-          ? "http://localhost:8000"
-          : "https://api.mipaka.dev";
+      const API = "https://api.mipaka.dev";
       const FLAGS = {
-        KE: "\u{1F1F0}\u{1F1EA}",
-        TZ: "\u{1F1F9}\u{1F1FF}",
-        UG: "\u{1F1FA}\u{1F1EC}",
-        RW: "\u{1F1F7}\u{1F1FC}",
-        BI: "\u{1F1E7}\u{1F1EE}",
-        CD: "\u{1F1E8}\u{1F1E9}",
-        SS: "\u{1F1F8}\u{1F1F8}",
+        KE: '<img src="https://flagicons.lipis.dev/flags/4x3/ke.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        TZ: '<img src="https://flagicons.lipis.dev/flags/4x3/tz.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        UG: '<img src="https://flagicons.lipis.dev/flags/4x3/ug.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        RW: '<img src="https://flagicons.lipis.dev/flags/4x3/rw.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        BI: '<img src="https://flagicons.lipis.dev/flags/4x3/bi.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        CD: '<img src="https://flagicons.lipis.dev/flags/4x3/cd.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
+        SS: '<img src="https://flagicons.lipis.dev/flags/4x3/ss.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
       };
 
       let countries = [];
       let selectedCountry = null;
-      // Each entry: { levelNum, levelName, items[], selectedId, selectedName }
-      let cascade = [];
-      let lastApiUrl = "";
-      let lastJsonData = null;
+      let cascadeLevels = []; // [{levelName, items, selectedId, selectedName}]
+      let totalRequests = 0;
 
+      // ── JSON SYNTAX HIGHLIGHTER ────────────────────────────────────────────────
+      function highlight(json) {
+        return JSON.stringify(json, null, 2)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(
+            /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+            (m) => {
+              let cls = "json-num";
+              if (/^"/.test(m)) {
+                cls = /:$/.test(m) ? "json-key" : "json-str";
+              } else if (/true|false/.test(m)) {
+                cls = "json-bool";
+              } else if (/null/.test(m)) {
+                cls = "json-null";
+              }
+              return `<span class="${cls}">${m}</span>`;
+            },
+          );
+      }
+
+      // ── API FETCH ──────────────────────────────────────────────────────────────
       async function apiFetch(path) {
-        lastApiUrl = path;
+        const t0 = performance.now();
         const res = await fetch(API + path);
         const data = await res.json();
-        // countries endpoint is paginated, top/children return direct arrays
-        lastJsonData = data;
+        const ms = Math.round(performance.now() - t0);
+        totalRequests++;
+        updateUrlBar(path);
+        updateJsonViewer(data, ms);
         return data.results || data;
       }
 
+      function updateUrlBar(path) {
+        const base = path.split("?")[0];
+        const qs = path.includes("?") ? "?" + path.split("?")[1] : "";
+        document.getElementById("url-bar").innerHTML =
+          `<span class="url-base">${API}</span><span class="url-path">${base}</span><span class="url-param">${qs}</span>`;
+      }
+
+      function updateJsonViewer(data, ms) {
+        const viewer = document.getElementById("json-viewer");
+        const arr = data.results || (Array.isArray(data) ? data : [data]);
+        viewer.innerHTML = highlight(
+          Array.isArray(arr) ? arr.slice(0, 5) : arr,
+        );
+        if (Array.isArray(arr) && arr.length > 5) {
+          viewer.innerHTML += `\n<span style="color:var(--dim)">// ... ${arr.length - 5} more results</span>`;
+        }
+        const stats = document.getElementById("response-stats");
+        const count = Array.isArray(arr) ? arr.length : 1;
+        stats.innerHTML = `
+    <div class="rstat">Status <span>200 OK</span></div>
+    <div class="rstat">Time <span>${ms}ms</span></div>
+    <div class="rstat">Results <span>${count}</span></div>
+    <div class="rstat">Requests <span>${totalRequests}</span></div>
+  `;
+      }
+
+      // ── INIT ───────────────────────────────────────────────────────────────────
       async function init() {
         try {
-          const data = await apiFetch("/api/v1/countries/");
-          countries = data;
+          countries = await apiFetch("/api/v1/countries/");
           renderCountryPills();
+          initTimeline();
         } catch (e) {
-          document.getElementById("results-grid").innerHTML =
-            '<div class="explorer-empty"><div class="icon">&#x26A0;</div><p>Could not connect to API</p></div>';
+          document.getElementById("country-pills").innerHTML =
+            '<div class="cpill" style="color:var(--earth)">⚠ Could not reach API</div>';
         }
       }
 
@@ -923,280 +1817,408 @@ results.forEach(county =>
         el.innerHTML = countries
           .map(
             (c) =>
-              `<div class="country-pill${selectedCountry && selectedCountry.code === c.code ? " active" : ""}" onclick="pickCountry('${c.code}')">` +
-              `<span>${FLAGS[c.code] || ""}</span><span>${c.name}</span></div>`,
+              `<div class="cpill${selectedCountry?.code === c.code ? " active" : ""}" onclick="pickCountry('${c.code}')">
+      <span class="flag">${FLAGS[c.code] || ""}</span>
+      <span>${c.name}</span>
+    </div>`,
           )
           .join("");
       }
 
+      // ── COUNTRY PICK ───────────────────────────────────────────────────────────
       async function pickCountry(code) {
         selectedCountry = countries.find((c) => c.code === code);
-        cascade = [];
+        cascadeLevels = [];
         renderCountryPills();
-        showLoading();
+        renderCascade();
 
         try {
-          const items = await apiFetch("/api/v1/countries/" + code + "/top/");
-          cascade.push({
-            levelNum: 1,
-            levelName: getLevelName(1),
-            items: items,
-            selectedId: null,
-            selectedName: "",
-          });
-          render();
+          const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+          const levelName =
+            selectedCountry.division_levels?.[0]?.name || "Level 1";
+          cascadeLevels = [
+            { levelName, items, selectedId: null, selectedName: null },
+          ];
+          renderCascade();
         } catch (e) {
-          document.getElementById("results-grid").innerHTML =
-            '<div class="explorer-empty"><p>Failed to load divisions</p></div>';
+          document.getElementById("cascade-dropdowns").innerHTML =
+            '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load — check connection</div>';
         }
       }
 
-      function getLevelName(level) {
-        if (!selectedCountry) return "Level " + level;
-        const dl = selectedCountry.division_levels.find(
-          (l) => l.level === level,
-        );
-        return dl ? dl.name : "Level " + level;
-      }
+      // ── CASCADE SELECT ─────────────────────────────────────────────────────────
+      async function onCascadeChange(levelIdx, selectEl) {
+        const id = parseInt(selectEl.value);
+        if (isNaN(id)) return;
 
-      async function pickDivision(cascadeIdx, divId) {
-        divId = parseInt(divId);
-        if (!divId) {
-          // "Select..." chosen — clear this level's selection and deeper levels
-          cascade[cascadeIdx].selectedId = null;
-          cascade[cascadeIdx].selectedName = "";
-          cascade = cascade.slice(0, cascadeIdx + 1);
-          render();
-          return;
-        }
+        const level = cascadeLevels[levelIdx];
+        const selected = level.items.find((d) => d.id === id);
+        level.selectedId = id;
+        level.selectedName = selected?.name || "";
 
-        const div = cascade[cascadeIdx].items.find((d) => d.id === divId);
-        cascade[cascadeIdx].selectedId = div.id;
-        cascade[cascadeIdx].selectedName = div.name;
-        cascade = cascade.slice(0, cascadeIdx + 1);
-        render();
+        // Remove deeper levels
+        cascadeLevels = cascadeLevels.slice(0, levelIdx + 1);
 
-        if (div.children_count > 0) {
-          showLoading();
+        // Show result card
+        renderResultCard(selected);
+        renderCascade();
+
+        // If children exist, fetch and add next level
+        if (selected && selected.children_count > 0) {
           try {
             const children = await apiFetch(
-              "/api/v1/divisions/" + div.id + "/children/",
+              `/api/v1/divisions/${id}/children/`,
             );
             if (children.length > 0) {
-              cascade.push({
-                levelNum: children[0].level,
-                levelName:
-                  children[0].level_name || getLevelName(children[0].level),
+              const nextLevelNum = (selected.level || levelIdx + 1) + 1;
+              const nextLevelDef = selectedCountry.division_levels?.find(
+                (l) => l.level === nextLevelNum,
+              );
+              const nextLevelName =
+                nextLevelDef?.name ||
+                children[0]?.level_name ||
+                `Level ${nextLevelNum}`;
+              cascadeLevels.push({
+                levelName: nextLevelName,
                 items: children,
                 selectedId: null,
-                selectedName: "",
+                selectedName: null,
               });
+              renderCascade();
             }
-            render();
           } catch (e) {
-            render();
+            // silently fail — no next level
           }
         }
       }
 
-      function clickResult(cascadeIdx, divId) {
-        // Find the select at this cascade index and change it, then trigger pickDivision
-        pickDivision(cascadeIdx, divId);
-      }
-
-      function render() {
-        renderCountryPills();
-        renderBreadcrumb();
-        renderCascade();
-        renderResults();
-        renderApiUrl();
-        renderJson();
-      }
-
-      function renderBreadcrumb() {
-        const el = document.getElementById("breadcrumb");
-        if (!selectedCountry) {
-          el.innerHTML = "";
-          return;
-        }
-        let html =
-          '<span class="crumb' +
-          (cascade.every((l) => !l.selectedId) ? " active" : "") +
-          '" onclick="pickCountry(\'' +
-          selectedCountry.code +
-          "')\">" +
-          (FLAGS[selectedCountry.code] || "") +
-          " " +
-          selectedCountry.name +
-          "</span>";
-        for (let i = 0; i < cascade.length; i++) {
-          if (cascade[i].selectedId) {
-            html += '<span class="sep">\u2192</span>';
-            const isLast =
-              i === cascade.length - 1 ||
-              !cascade[i + 1] ||
-              !cascade[i + 1].selectedId;
-            html +=
-              '<span class="crumb' +
-              (isLast ? " active" : "") +
-              '">' +
-              cascade[i].selectedName +
-              "</span>";
-          }
-        }
-        el.innerHTML = html;
-      }
-
+      // ── RENDER CASCADE ─────────────────────────────────────────────────────────
       function renderCascade() {
-        const el = document.getElementById("cascade");
-        if (cascade.length === 0) {
-          el.innerHTML = "";
+        const el = document.getElementById("cascade-dropdowns");
+        if (cascadeLevels.length === 0) {
+          el.innerHTML =
+            '<div style="color:var(--dim);font-size:0.9rem;padding:1rem 0;">Select a country above to start exploring</div>';
+          document.getElementById("result-card").innerHTML = "";
           return;
         }
-        el.innerHTML = cascade
-          .map((level, idx) => {
-            const options = level.items
+
+        el.innerHTML = cascadeLevels
+          .map((lvl, i) => {
+            const opts = lvl.items
               .map(
                 (d) =>
-                  '<option value="' +
-                  d.id +
-                  '"' +
-                  (d.id === level.selectedId ? " selected" : "") +
-                  ">" +
-                  d.name +
-                  (d.children_count > 0 ? " (" + d.children_count + ")" : "") +
-                  "</option>",
+                  `<option value="${d.id}"${d.id === lvl.selectedId ? " selected" : ""}>${d.name}${d.children_count > 0 ? ` (${d.children_count})` : ""}</option>`,
               )
               .join("");
-            return (
-              '<div class="cascade-col"><label>' +
-              level.levelName +
-              "</label>" +
-              '<select class="cascade-select" onchange="pickDivision(' +
-              idx +
-              ', this.value)">' +
-              '<option value="">Select ' +
-              level.levelName +
-              "...</option>" +
-              options +
-              "</select></div>"
-            );
+            return `<div class="cascade-group" style="animation-delay:${i * 0.08}s">
+        <label class="cascade-label">${lvl.levelName} <span style="color:var(--dim);text-transform:none;letter-spacing:0">(${lvl.items.length})</span></label>
+        <select class="cascade-select" onchange="onCascadeChange(${i}, this)">
+          <option value="">— Select ${lvl.levelName} —</option>
+          ${opts}
+        </select>
+      </div>`;
           })
           .join("");
       }
 
-      function renderResults() {
-        const grid = document.getElementById("results-grid");
-        const info = document.getElementById("results-info");
-        if (cascade.length === 0) {
-          info.innerHTML = "";
-          grid.innerHTML =
-            '<div class="explorer-empty"><div class="icon">\u{1F30D}</div><p>Select a country to start exploring</p></div>';
+      // ── RESULT CARD ────────────────────────────────────────────────────────────
+      function renderResultCard(division) {
+        const el = document.getElementById("result-card");
+        if (!division) {
+          el.innerHTML = "";
           return;
         }
 
-        const deepest = cascade[cascade.length - 1];
-        const items = deepest.items;
-        const levelName = deepest.levelName;
-        const hasChildren = items.some((d) => d.children_count > 0);
+        // Build path from cascade selections
+        const pathParts = [selectedCountry.name];
+        for (const lvl of cascadeLevels) {
+          if (lvl.selectedName) pathParts.push(lvl.selectedName);
+        }
 
-        info.innerHTML =
-          "<h3>" +
-          levelName +
-          's</h3><span class="count">' +
-          items.length +
-          (items.length === 1 ? " result" : " results") +
-          "</span>";
+        el.innerHTML = `<div class="result-card">
+      <div class="result-card-name">${division.name}</div>
+      <div class="result-card-meta">
+        <div class="rcm">Level <span>${division.level_name || ""}</span></div>
+        ${division.code ? `<div class="rcm">Code <span>${division.code}</span></div>` : ""}
+        <div class="rcm">Children <span>${division.children_count ?? 0}</span></div>
+        <div class="rcm">ID <span>${division.id}</span></div>
+      </div>
+      <div class="result-card-path">
+        ${pathParts.map((p, i) => (i < pathParts.length - 1 ? `<span>${p}</span><span class="rcp-sep">›</span>` : `<span style="color:var(--gold-lt)">${p}</span>`)).join("")}
+      </div>
+    </div>`;
+      }
 
-        grid.innerHTML = items
-          .map((d) => {
-            const sel = d.id === deepest.selectedId ? " selected" : "";
-            const leaf = d.children_count === 0 ? " leaf" : "";
-            const click =
-              d.children_count > 0
-                ? ' onclick="clickResult(' +
-                  (cascade.length - 1) +
-                  ", " +
-                  d.id +
-                  ')"'
-                : "";
-            const meta =
-              d.children_count > 0
-                ? d.children_count +
-                  " sub-division" +
-                  (d.children_count !== 1 ? "s" : "")
-                : "No sub-divisions";
-            const codePart = d.code ? " \u00B7 " + d.code : "";
-            return (
-              '<div class="result-item' +
-              sel +
-              leaf +
-              '"' +
-              click +
-              ">" +
-              '<div class="rname">' +
-              d.name +
-              "</div>" +
-              '<div class="rmeta">' +
-              meta +
-              codePart +
-              "</div></div>"
-            );
+      // ── TIMELINE ──────────────────────────────────────────────────────────────
+      const CITY_DATA = {
+        bujumbura: {
+          label: "Bujumbura · Burundi",
+          history: [
+            {
+              era: "Kingdom of Burundi",
+              start: 1400,
+              end: 1889,
+              name: "Bujumbura",
+              lang: "Kirundi · Indigenous",
+              note: "Settlement on Lake Tanganyika — meaning disputed",
+              type: "indigenous",
+            },
+            {
+              era: "German East Africa",
+              start: 1889,
+              end: 1916,
+              name: "Usumbura",
+              lang: "German · Colonial",
+              note: "German military post on Lake Tanganyika",
+              type: "colonial",
+            },
+            {
+              era: "Belgian Ruanda-Urundi",
+              start: 1916,
+              end: 1962,
+              name: "Usumbura",
+              lang: "French · Colonial",
+              note: "Belgian colonial capital — retained German name",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Burundi",
+              start: 1962,
+              end: 2025,
+              name: "Bujumbura",
+              lang: "Kirundi · Official",
+              note: "Indigenous name restored at independence",
+              type: "official",
+            },
+          ],
+        },
+        juba: {
+          label: "Juba · South Sudan",
+          history: [
+            {
+              era: "Pre-colonial Bari",
+              start: 1200,
+              end: 1821,
+              name: "Jubek",
+              lang: "Bari · Indigenous",
+              note: '"Uncultivated land near the river" — Bari settlement',
+              type: "indigenous",
+            },
+            {
+              era: "Mahdist State",
+              start: 1885,
+              end: 1898,
+              name: "Gondokoro",
+              lang: "English · Colonial",
+              note: "Older trading post nearby — abandoned for Juba",
+              type: "colonial",
+            },
+            {
+              era: "Anglo-Egyptian Sudan",
+              start: 1899,
+              end: 1956,
+              name: "Juba",
+              lang: "Bari · Colonial",
+              note: "British administrative post established 1922",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Sudan",
+              start: 1956,
+              end: 2011,
+              name: "Juba",
+              lang: "Arabic · Official",
+              note: "Capital of Southern Sudan autonomous region",
+              type: "official",
+            },
+            {
+              era: "Republic of South Sudan",
+              start: 2011,
+              end: 2025,
+              name: "Juba",
+              lang: "English · Official",
+              note: "Capital of the world's newest country",
+              type: "official",
+            },
+          ],
+        },
+        kampala: {
+          label: "Kampala · Uganda",
+          history: [
+            {
+              era: "Buganda Kingdom",
+              start: 1300,
+              end: 1890,
+              name: "Kasozi k'Empala",
+              lang: "Luganda · Indigenous",
+              note: "Hill of impala — Buganda royal hunting ground",
+              type: "indigenous",
+            },
+            {
+              era: "Uganda Protectorate",
+              start: 1890,
+              end: 1962,
+              name: "Kampala",
+              lang: "English · Colonial",
+              note: "British fort established on Old Kampala Hill",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Uganda",
+              start: 1962,
+              end: 2025,
+              name: "Kampala",
+              lang: "English · Official",
+              note: "Capital of independent Uganda since 1962",
+              type: "official",
+            },
+          ],
+        },
+        kinshasa: {
+          label: "Kinshasa · DR Congo",
+          history: [
+            {
+              era: "Kingdom of Kongo",
+              start: 1390,
+              end: 1885,
+              name: "Nshasa",
+              lang: "Kikongo · Indigenous",
+              note: "Teke fishing village on the Congo River",
+              type: "indigenous",
+            },
+            {
+              era: "Congo Free State",
+              start: 1885,
+              end: 1908,
+              name: "Léopoldville",
+              lang: "French · Colonial",
+              note: "Stanley's trading post, named after King Leopold II",
+              type: "colonial",
+            },
+            {
+              era: "Belgian Congo",
+              start: 1908,
+              end: 1960,
+              name: "Léopoldville",
+              lang: "French · Colonial",
+              note: "Capital of Belgian Congo — grew into major city",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Zaire",
+              start: 1966,
+              end: 1997,
+              name: "Kinshasa",
+              lang: "Lingala · Official",
+              note: "Renamed under Mobutu's authenticité policy",
+              type: "official",
+            },
+            {
+              era: "DR Congo",
+              start: 1997,
+              end: 2025,
+              name: "Kinshasa",
+              lang: "Lingala · Official",
+              note: "Capital of the Democratic Republic of the Congo",
+              type: "official",
+            },
+          ],
+        },
+        nairobi: {
+          label: "Nairobi · Kenya",
+          history: [
+            {
+              era: "Maasai Settlements",
+              start: 1500,
+              end: 1899,
+              name: "Enkare Nairobi",
+              lang: "Maa · Indigenous",
+              note: '"Cool waters" — Maasai watering hole on the Athi Plains',
+              type: "indigenous",
+            },
+            {
+              era: "British East Africa",
+              start: 1899,
+              end: 1920,
+              name: "Nairobi",
+              lang: "English · Colonial",
+              note: "Railway depot built 1899 — became Protectorate capital 1907",
+              type: "colonial",
+            },
+            {
+              era: "Kenya Colony",
+              start: 1920,
+              end: 1963,
+              name: "Nairobi",
+              lang: "English · Colonial",
+              note: "Capital of Kenya Colony and Protectorate",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Kenya",
+              start: 1963,
+              end: 2025,
+              name: "Nairobi",
+              lang: "English · Official",
+              note: 'Capital of independent Kenya — "Green City in the Sun"',
+              type: "official",
+            },
+          ],
+        },
+      };
+
+      let currentCity = "kampala";
+
+      function pickCity(city) {
+        currentCity = city;
+        // Update tab states
+        document
+          .querySelectorAll(".city-tab")
+          .forEach((t) => t.classList.remove("active"));
+        event.target.classList.add("active");
+        // Update header
+        document.getElementById("history-city-label").textContent =
+          CITY_DATA[city].label;
+        // Reset slider and re-render
+        const history = CITY_DATA[city].history;
+        const minYear = history[0].start;
+        const slider = document.getElementById("year-slider");
+        slider.min = minYear;
+        slider.value = Math.max(
+          minYear,
+          Math.min(1890, history[history.length - 1].end),
+        );
+        updateTimeline(slider.value);
+      }
+
+      function initTimeline() {
+        updateTimeline(1890);
+      }
+
+      function updateTimeline(year) {
+        year = parseInt(year);
+        const slider = document.getElementById("year-slider");
+        const minYear = parseInt(slider.min);
+        const pct = ((year - minYear) / (2025 - minYear)) * 100;
+        slider.style.background = `linear-gradient(90deg,var(--earth) ${pct}%,var(--border) ${pct}%)`;
+        document.getElementById("year-display").textContent = year;
+
+        const history = CITY_DATA[currentCity].history;
+        const tl = document.getElementById("name-timeline");
+        tl.innerHTML = history
+          .map((entry) => {
+            const active = year >= entry.start && year <= entry.end;
+            return `<div class="timeline-entry${active ? " active" : ""}">
+      <div class="te-era">${entry.era} (${entry.start}–${entry.end === 2025 ? "present" : entry.end})</div>
+      <div class="te-name">${entry.name}</div>
+      <div class="te-lang">${entry.lang}</div>
+      <div class="te-note">${entry.note}</div>
+    </div>`;
           })
           .join("");
       }
 
-      function renderApiUrl() {
-        const el = document.getElementById("api-url-bar");
-        if (lastApiUrl && selectedCountry) {
-          el.innerHTML = '<span class="method">GET</span> ' + lastApiUrl;
-          el.classList.add("visible");
-        } else {
-          el.classList.remove("visible");
-        }
-      }
-
-      function renderJson() {
-        const toggle = document.getElementById("json-toggle");
-        if (lastJsonData && selectedCountry) {
-          toggle.classList.add("visible");
-          document.getElementById("json-body").textContent = JSON.stringify(
-            lastJsonData,
-            null,
-            2,
-          );
-        } else {
-          toggle.classList.remove("visible");
-        }
-      }
-
-      function toggleJson() {
-        const body = document.getElementById("json-body");
-        const btn = document.querySelector(".json-toggle-btn");
-        body.classList.toggle("visible");
-        btn.textContent = body.classList.contains("visible")
-          ? "Hide JSON Response"
-          : "Show JSON Response";
-      }
-
-      function showLoading() {
-        document.getElementById("results-grid").innerHTML =
-          '<div class="explorer-empty"><div class="spinner"></div> Loading...</div>';
-        document.getElementById("results-info").innerHTML = "";
-      }
-
-      function showTab(name, ev) {
-        document
-          .querySelectorAll(".code-tab")
-          .forEach((t) => t.classList.remove("active"));
-        document
-          .querySelectorAll(".code-block")
-          .forEach((b) => b.classList.remove("active"));
-        ev.target.classList.add("active");
-        document.getElementById("tab-" + name).classList.add("active");
-      }
-
-      // Boot
+      // ── BOOT ──────────────────────────────────────────────────────────────────
       init();
     </script>
   </body>
