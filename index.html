@@ -1139,9 +1139,7 @@
         <a href="#history">History</a>
         <a href="#coverage">Coverage</a>
         <a href="https://api.mipaka.dev/api/docs/" target="_blank">Docs</a>
-        <a
-          href="https://dev.to/ceddyville/series/37588"
-          target="_blank"
+        <a href="https://dev.to/ceddyville/series/37588" target="_blank"
           >Blog</a
         >
       </div>
@@ -1357,9 +1355,15 @@
             <button class="city-tab" onclick="pickCity('bujumbura')">
               🇧🇮 Bujumbura
             </button>
+            <button class="city-tab" onclick="pickCity('dar')">
+              🇹🇿 Dar es Salaam
+            </button>
             <button class="city-tab" onclick="pickCity('juba')">🇸🇸 Juba</button>
             <button class="city-tab active" onclick="pickCity('kampala')">
               🇺🇬 Kampala
+            </button>
+            <button class="city-tab" onclick="pickCity('kigali')">
+              🇷🇼 Kigali
             </button>
             <button class="city-tab" onclick="pickCity('kinshasa')">
               🇨🇩 Kinshasa
@@ -1725,9 +1729,7 @@
         <a href="https://rapidapi.com/ceddyville/api/mipaka" target="_blank"
           >RapidAPI</a
         >
-        <a
-          href="https://dev.to/ceddyville/series/37588"
-          target="_blank"
+        <a href="https://dev.to/ceddyville/series/37588" target="_blank"
           >Blog</a
         >
         <a href="mailto:hello@mipaka.dev">Contact</a>
@@ -2006,6 +2008,56 @@
             },
           ],
         },
+        dar: {
+          label: "Dar es Salaam · Tanzania",
+          history: [
+            {
+              era: "Pre-colonial Swahili",
+              start: 1200,
+              end: 1866,
+              name: "Mzizima",
+              lang: "Swahili · Indigenous",
+              note: '"Healthy town" — original fishing village on the coast',
+              type: "indigenous",
+            },
+            {
+              era: "Zanzibar Sultanate",
+              start: 1866,
+              end: 1885,
+              name: "Dar es Salaam",
+              lang: "Arabic · Indigenous",
+              note: '"Haven of peace" — founded by Sultan Majid bin Said of Zanzibar',
+              type: "indigenous",
+            },
+            {
+              era: "German East Africa",
+              start: 1885,
+              end: 1919,
+              name: "Dar es Salaam",
+              lang: "Arabic · Colonial",
+              note: "Capital of German East Africa from 1891",
+              type: "colonial",
+            },
+            {
+              era: "Tanganyika Territory",
+              start: 1919,
+              end: 1961,
+              name: "Dar es Salaam",
+              lang: "English · Colonial",
+              note: "Capital of British Tanganyika — main port and administrative centre",
+              type: "colonial",
+            },
+            {
+              era: "United Republic of Tanzania",
+              start: 1964,
+              end: 2025,
+              name: "Dar es Salaam",
+              lang: "Swahili · Official",
+              note: "Commercial capital — government moved to Dodoma 1996 but Dar remains the largest city",
+              type: "official",
+            },
+          ],
+        },
         juba: {
           label: "Juba · South Sudan",
           history: [
@@ -2084,6 +2136,47 @@
               name: "Kampala",
               lang: "English · Official",
               note: "Capital of independent Uganda since 1962",
+              type: "official",
+            },
+          ],
+        },
+        kigali: {
+          label: "Kigali · Rwanda",
+          history: [
+            {
+              era: "Kingdom of Rwanda",
+              start: 1081,
+              end: 1884,
+              name: "Kigali",
+              lang: "Kinyarwanda · Indigenous",
+              note: '"Hill of many" — trading hill in the central highlands',
+              type: "indigenous",
+            },
+            {
+              era: "German East Africa",
+              start: 1884,
+              end: 1916,
+              name: "Kigali",
+              lang: "German · Colonial",
+              note: "German colonial outpost established by Richard Kandt in 1907",
+              type: "colonial",
+            },
+            {
+              era: "Belgian Ruanda-Urundi",
+              start: 1916,
+              end: 1962,
+              name: "Kigali",
+              lang: "French · Colonial",
+              note: "Belgian administrative centre — grew slowly under colonial rule",
+              type: "colonial",
+            },
+            {
+              era: "Republic of Rwanda",
+              start: 1962,
+              end: 2025,
+              name: "Kigali",
+              lang: "Kinyarwanda · Official",
+              note: "Capital of independent Rwanda — now one of Africa's cleanest cities",
               type: "official",
             },
           ],
