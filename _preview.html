@@ -1,0 +1,2690 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mipaka Preview — Country & Division Pages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=Karla:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        /* Mipaka palette */
+        --earth: #b83225;
+        --earth-mid: #d94f35;
+        --ocean: #0d8c7e;
+        --ocean-lt: #12b8a6;
+        --laterite: #c4720e;
+        --gold: #e8b030;
+        --gold-lt: #f5cc60;
+        --night: #070a10;
+        --ink: #0e1219;
+        --card: #141820;
+        --card2: #1a1f2b;
+        --border: rgba(184, 50, 37, 0.22);
+        --border2: rgba(13, 140, 126, 0.15);
+        --mist: #f5f0e6;
+        --chalk: #fdfaf4;
+        --accent: #0d8c7e;
+        --dim: #4a5468;
+        --glow: rgba(184, 50, 37, 0.18);
+        /* Light mode additions (for content area) */
+        --bg-light: #f5f0e6;
+        --bg-light2: #ede5d4;
+        --surface-light: #faf6ee;
+        --ink-dark: #1a1208;
+        --ink-mid: #3d2c18;
+        --ink-soft: #7a6248;
+        --border-light: rgba(26, 18, 8, 0.12);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg-light);
+        color: var(--ink-dark);
+        font-family: "Karla", sans-serif;
+        font-size: 15px;
+        line-height: 1.7;
+        overflow-x: hidden;
+      }
+
+      /* ── NAV ── */
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 48px;
+        border-bottom: 1px solid var(--border-light);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(245, 240, 232, 0.96);
+        backdrop-filter: blur(12px);
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+      .nav-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: var(--night);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .nav-wordmark {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--ink-dark);
+      }
+      .nav-tagline {
+        font-size: 10px;
+        color: var(--ink-soft);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-left: 1px solid var(--border-light);
+        padding-left: 12px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+      }
+      .nav-links a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+        font-weight: 500;
+      }
+      .nav-links a:hover {
+        color: var(--ink-dark);
+      }
+      .nav-cta {
+        background: var(--night);
+        color: var(--mist) !important;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .nav-cta:hover {
+        background: var(--earth) !important;
+      }
+
+      /* ── BREADCRUMB ── */
+      .breadcrumb {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 18px 48px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+      .breadcrumb a {
+        color: var(--ink-soft);
+        text-decoration: none;
+      }
+      .breadcrumb a:hover {
+        color: var(--ocean);
+      }
+      .breadcrumb .current {
+        color: var(--ink-dark);
+        font-weight: 500;
+      }
+
+      /* ── HERO (dark) ── */
+      .hero {
+        background: var(--night);
+        padding: 48px 48px 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        right: -40px;
+        top: -40px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(184, 50, 37, 0.1) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        left: -60px;
+        bottom: -60px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(13, 140, 126, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: rgba(245, 240, 230, 0.45);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+        letter-spacing: 0.04em;
+      }
+      .hero-back:hover {
+        color: var(--ocean-lt);
+      }
+      .hero-label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        color: var(--ocean-lt);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .hero-name {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(48px, 6.5vw, 80px);
+        font-weight: 700;
+        color: var(--mist);
+        line-height: 1;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+      }
+      .hero-native {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-style: italic;
+        color: var(--gold-lt);
+        margin-bottom: 22px;
+      }
+      .hero-tags {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hero-tag {
+        font-size: 11px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 0.5px solid rgba(13, 140, 126, 0.35);
+        color: rgba(245, 240, 230, 0.65);
+      }
+      .hero-tag strong {
+        color: var(--ocean-lt);
+        font-weight: 500;
+      }
+      .hero-tag.earth-badge {
+        background: rgba(184, 50, 37, 0.15);
+        border: 0.5px solid rgba(184, 50, 37, 0.35);
+        color: var(--earth-mid) !important;
+      }
+      .hero-tag.earth-badge strong {
+        color: var(--earth-mid);
+      }
+      .hero-tag.gold-badge {
+        background: rgba(232, 176, 48, 0.12);
+        border: 0.5px solid rgba(232, 176, 48, 0.35);
+        color: var(--gold) !important;
+      }
+      .hero-tag.gold-badge strong {
+        color: var(--gold);
+      }
+
+      /* ── Maasai stripe ── */
+      .shuka-stripe {
+        display: flex;
+        height: 3px;
+      }
+      .shuka-stripe span {
+        flex: 1;
+      }
+      .shuka-stripe .s1 {
+        background: var(--earth);
+      }
+      .shuka-stripe .s2 {
+        background: var(--gold);
+      }
+      .shuka-stripe .s3 {
+        background: var(--ocean);
+      }
+
+      /* ── BODY WRAP ── */
+      .body-wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 48px 48px;
+      }
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 48px;
+      }
+
+      /* ── SECTIONS ── */
+      .content-section {
+        margin-bottom: 44px;
+      }
+      .section-heading {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--ink-dark);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-light);
+      }
+      .section-body {
+        font-size: 15px;
+        color: var(--ink-soft);
+        line-height: 1.8;
+      }
+
+      /* ── DIVISION GRID (children) ── */
+      .division-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .division-card {
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 16px 18px;
+        text-decoration: none;
+        color: var(--ink-dark);
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .division-card:hover {
+        border-color: var(--ocean);
+        background: rgba(13, 140, 126, 0.04);
+        transform: translateY(-1px);
+      }
+      .division-card-name {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .division-card-meta {
+        font-size: 12px;
+        color: var(--ink-soft);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .division-card-count {
+        color: var(--ocean);
+        font-weight: 600;
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+      }
+      .division-card-arrow {
+        color: var(--ocean);
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .division-card:hover .division-card-arrow {
+        opacity: 1;
+      }
+
+      /* ── STATS ROW ── */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 32px;
+      }
+      .stat-card {
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 16px 18px;
+        text-align: center;
+      }
+      .stat-value {
+        font-family: "Space Mono", monospace;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--ink-dark);
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 4px;
+      }
+
+      /* ── SIDEBAR ── */
+      .sidebar-card {
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .sidebar-card-header {
+        background: var(--night);
+        padding: 14px 18px;
+        font-family: "Playfair Display", serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--mist);
+      }
+      .sidebar-card-body {
+        padding: 16px 18px;
+      }
+      .sidebar-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 13px;
+      }
+      .sidebar-row:last-child {
+        border-bottom: none;
+      }
+      .sidebar-key {
+        color: var(--ink-soft);
+      }
+      .sidebar-val {
+        color: var(--ink-dark);
+        font-weight: 500;
+        text-align: right;
+      }
+
+      /* ── PARENT LINK CARD ── */
+      .parent-link-card {
+        background: rgba(13, 140, 126, 0.06);
+        border: 1px solid rgba(13, 140, 126, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        text-decoration: none;
+        display: block;
+        transition: all 0.2s;
+        margin-bottom: 20px;
+      }
+      .parent-link-card:hover {
+        background: rgba(13, 140, 126, 0.1);
+        border-color: var(--ocean);
+      }
+      .parent-link-label {
+        font-size: 10px;
+        color: var(--ocean);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 6px;
+      }
+      .parent-link-name {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--ink-dark);
+      }
+      .parent-link-sub {
+        font-size: 13px;
+        color: var(--ink-soft);
+        margin-top: 2px;
+      }
+      .parent-link-arrow {
+        font-size: 18px;
+        color: var(--ocean);
+        margin-top: 10px;
+      }
+
+      /* ── CONTRIBUTE CARD ── */
+      .contribute-card {
+        background: var(--night);
+        border-radius: 10px;
+        padding: 22px 20px;
+      }
+      .contribute-card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--mist);
+        margin-bottom: 10px;
+      }
+      .contribute-card-body {
+        font-size: 13px;
+        color: rgba(245, 240, 230, 0.6);
+        line-height: 1.65;
+        margin-bottom: 18px;
+      }
+      .contribute-btn {
+        display: block;
+        text-align: center;
+        background: var(--ocean);
+        color: white;
+        padding: 11px 20px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: background 0.2s;
+      }
+      .contribute-btn:hover {
+        background: var(--ocean-lt);
+      }
+
+      /* ── HISTORY BLOCK ── */
+      .history-block {
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 24px 28px;
+        position: relative;
+        overflow: hidden;
+      }
+      .history-block::before {
+        content: '';
+        position: absolute; left: 0; top: 0; bottom: 0;
+        width: 4px; background: linear-gradient(to bottom, var(--earth), var(--laterite), var(--ocean));
+        border-radius: 10px 0 0 10px;
+      }
+      .history-block p {
+        font-size: 15px; color: var(--ink-mid); line-height: 1.85; margin-bottom: 12px;
+      }
+      .history-block p:last-child { margin-bottom: 0; }
+      .history-block .history-highlight {
+        color: var(--ink-dark); font-weight: 500;
+      }
+      .history-block .history-year {
+        font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ocean); font-weight: 600;
+      }
+
+      /* ── LEVEL TAGS ── */
+      .level-flow {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .level-tag {
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        color: var(--ink-mid);
+      }
+      .level-tag.active {
+        background: rgba(13, 140, 126, 0.1);
+        border-color: rgba(13, 140, 126, 0.3);
+        color: var(--ocean);
+        font-weight: 600;
+      }
+      .level-arrow {
+        color: var(--ink-soft);
+        font-size: 11px;
+      }
+
+      /* ── COUNTRY GRID (homepage) ── */
+      .country-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .country-card {
+        background: var(--surface-light);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 24px;
+        text-decoration: none;
+        color: var(--ink-dark);
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .country-card:hover {
+        border-color: var(--earth);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      }
+      .country-card-flag {
+        font-size: 36px;
+        margin-bottom: 12px;
+      }
+      .country-card-name {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .country-card-code {
+        font-family: "Space Mono", monospace;
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-bottom: 12px;
+      }
+      .country-card-stats {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+      .country-card-stat {
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+      .country-card-stat strong {
+        color: var(--ink-dark);
+        font-family: "Space Mono", monospace;
+      }
+      .country-card-levels {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .country-level-tag {
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        background: rgba(13, 140, 126, 0.08);
+        color: var(--ocean);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: var(--night);
+        padding: 36px 48px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-top: 48px;
+      }
+      .footer-brand {
+        font-family: "Playfair Display", serif;
+        font-size: 18px;
+        color: var(--mist);
+        margin-bottom: 4px;
+      }
+      .footer-brand span {
+        color: var(--ocean-lt);
+      }
+      .footer-sub {
+        font-size: 11px;
+        color: rgba(245, 240, 230, 0.4);
+      }
+      .footer-cols {
+        display: flex;
+        gap: 48px;
+      }
+      .footer-col-label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(245, 240, 230, 0.35);
+        margin-bottom: 10px;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: rgba(245, 240, 230, 0.55);
+        text-decoration: none;
+        margin-bottom: 7px;
+      }
+      .footer-col a:hover {
+        color: var(--mist);
+      }
+
+      /* ── PAGE SEPARATOR ── */
+      .page-separator {
+        max-width: 1000px;
+        margin: 60px auto;
+        padding: 0 48px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .page-separator hr {
+        flex: 1;
+        border: none;
+        border-top: 2px dashed var(--border-light);
+      }
+      .page-separator span {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .body-wrap {
+        animation: fadeUp 0.5s ease both;
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 14px 20px;
+        }
+        .nav-tagline {
+          display: none;
+        }
+        .hero {
+          padding: 32px 20px 28px;
+        }
+        .body-wrap {
+          padding: 32px 20px;
+        }
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+        .breadcrumb {
+          padding: 14px 20px 0;
+        }
+        .stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .country-grid {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          padding: 28px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE 0: REFRESHED LANDING PAGE (mipaka.dev homepage)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <nav>
+      <a href="#" class="nav-logo">
+        <div class="nav-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="#0d8c7e" stroke-width="1.5"/>
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="#b83225" stroke-width="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="#e8b030" stroke-width="1.5"/>
+            <rect x="14" y="14" width="7" height="7" rx="1" stroke="#0d8c7e" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <span class="nav-wordmark">mipaka</span>
+        <span class="nav-tagline">Every Border · One API</span>
+      </a>
+      <div class="nav-links">
+        <a href="#countries">Countries</a>
+        <a href="#explorer">Explorer</a>
+        <a href="#history">Timeline</a>
+        <a href="#contribute">Contribute</a>
+        <a href="https://dev.to/ceddyville/series/37588" target="_blank">Blog</a>
+        <a href="https://api.mipaka.dev/api/docs/" target="_blank" class="nav-cta">API Docs</a>
+      </div>
+    </nav>
+
+    <!-- Hero (full-dark, center-aligned like current but cleaner) -->
+    <div class="hero" style="padding: 80px 48px 56px; text-align: center; min-height: 60vh; display: flex; align-items: center; justify-content: center;">
+      <div class="hero-inner" style="max-width: 700px;">
+        <div class="hero-label" style="margin-bottom: 14px;">East & Central Africa · 7 Countries · 107,741 Divisions</div>
+        <div class="hero-name" style="font-size: clamp(48px, 8vw, 88px); margin-bottom: 8px;">
+          Every border.
+        </div>
+        <div style="font-family: 'Playfair Display', serif; font-size: clamp(48px, 8vw, 88px); font-weight: 700; color: var(--gold-lt); line-height: 1; margin-bottom: 10px; text-shadow: 0 0 60px rgba(232,176,48,0.2);">
+          One <span style="color: var(--earth-mid); text-shadow: 0 0 40px rgba(184,50,37,0.25);">API.</span>
+        </div>
+        <div style="font-size: 17px; font-weight: 300; color: rgba(245,240,230,0.55); max-width: 560px; margin: 0 auto 28px; line-height: 1.7;">
+          Normalized, developer-ready access to counties, regions, districts, wards, and villages — plus historical place names from pre-colonial kingdoms to independence.
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px;">
+          <a href="#explorer" style="background: var(--ocean); color: white; padding: 12px 28px; border-radius: 4px; font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: background 0.2s;">Try it live ↓</a>
+          <a href="https://api.mipaka.dev/api/docs/" target="_blank" style="background: transparent; color: var(--mist); padding: 12px 28px; border-radius: 4px; font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(245,240,230,0.15); transition: all 0.2s;">API Docs</a>
+          <a href="https://github.com/ceddyville/mipaka-api" target="_blank" style="background: transparent; color: var(--mist); padding: 12px 28px; border-radius: 4px; font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(245,240,230,0.15); transition: all 0.2s;">GitHub</a>
+        </div>
+        <div class="hero-tags" style="justify-content: center;">
+          <span class="hero-tag"><strong>107,741</strong> divisions</span>
+          <span class="hero-tag earth-badge"><strong>48</strong> historical eras</span>
+          <span class="hero-tag gold-badge"><strong>124</strong> historical names</span>
+          <span class="hero-tag" style="border-color: rgba(245,240,230,0.15);"><strong>Free</strong> & Open Source</span>
+        </div>
+      </div>
+    </div>
+    <div class="shuka-stripe"><span class="s1"></span><span class="s2"></span><span class="s3"></span></div>
+
+    <!-- Countries Section (replaces old Coverage Grid) -->
+    <div id="countries" style="background: var(--bg-light); padding: 64px 0;">
+      <div class="body-wrap" style="animation: none;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocean); margin-bottom: 10px;">Browse · 7 Countries</div>
+          <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px;">Built for the region.</div>
+          <div style="font-size: 15px; color: var(--ink-soft); max-width: 500px; margin: 0 auto;">Click a country to browse its full administrative hierarchy — from regions down to the smallest village.</div>
+        </div>
+        <div class="country-grid">
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇰🇪</div>
+            <div class="country-card-name">Kenya</div>
+            <div class="country-card-code">KE</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>2,303</strong> divisions</span>
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Constituency</span>
+              <span class="country-level-tag">Ward</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇹🇿</div>
+            <div class="country-card-name">Tanzania</div>
+            <div class="country-card-code">TZ</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>4,182</strong> divisions</span>
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Region</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">Ward</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇺🇬</div>
+            <div class="country-card-name">Uganda</div>
+            <div class="country-card-code">UG</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>83,017</strong> divisions</span>
+              <span class="country-card-stat"><strong>6</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Region</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Sub-county</span>
+              <span class="country-level-tag">Parish</span>
+              <span class="country-level-tag">Village</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇷🇼</div>
+            <div class="country-card-name">Rwanda</div>
+            <div class="country-card-code">RW</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>17,453</strong> divisions</span>
+              <span class="country-card-stat"><strong>5</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">Sector</span>
+              <span class="country-level-tag">Cell</span>
+              <span class="country-level-tag">Village</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇧🇮</div>
+            <div class="country-card-name">Burundi</div>
+            <div class="country-card-code">BI</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>491</strong> divisions</span>
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">Commune</span>
+              <span class="country-level-tag">Colline</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇨🇩</div>
+            <div class="country-card-name">DR Congo</div>
+            <div class="country-card-code">CD</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>185</strong> divisions</span>
+              <span class="country-card-stat"><strong>2</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">Territory</span>
+            </div>
+          </a>
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇸🇸</div>
+            <div class="country-card-name">South Sudan</div>
+            <div class="country-card-code">SS</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"><strong>110</strong> divisions</span>
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">State</span>
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Payam</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explorer placeholder (keeps existing Live Explorer) -->
+    <div id="explorer" style="background: var(--night); padding: 64px 48px; text-align: center;">
+      <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocean-lt); margin-bottom: 10px;">Live API Explorer</div>
+      <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--mist); margin-bottom: 6px;">Explore any division. See the JSON live.</div>
+      <div style="font-size: 15px; color: rgba(245,240,230,0.5); margin-bottom: 24px;">Pick a country, then drill down level by level.</div>
+      <div style="background: var(--card); border: 1px solid rgba(184,50,37,0.12); border-radius: 12px; padding: 48px; max-width: 900px; margin: 0 auto;">
+        <div style="color: var(--dim); font-size: 14px;">[Existing interactive explorer — country pills, cascading dropdowns, JSON preview — stays exactly as-is]</div>
+      </div>
+    </div>
+
+    <!-- Timeline placeholder (keeps existing Historical Timeline) -->
+    <div id="history" style="background: var(--bg-light); padding: 64px 48px; text-align: center;">
+      <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocean); margin-bottom: 10px;">Historical Names</div>
+      <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--ink-dark); margin-bottom: 6px;">Names change. Borders shift. We track both.</div>
+      <div style="font-size: 15px; color: var(--ink-soft); margin-bottom: 24px;">From pre-colonial kingdoms through colonial rule to independence.</div>
+      <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 12px; padding: 48px; max-width: 900px; margin: 0 auto;">
+        <div style="color: var(--ink-soft); font-size: 14px;">[Existing historical timeline — 7 city tabs, year slider, name cards — stays exactly as-is]</div>
+      </div>
+    </div>
+
+    <!-- Contribute CTA (new section) -->
+    <div id="contribute" style="background: var(--night); padding: 64px 48px; text-align: center;">
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocean-lt); margin-bottom: 10px;">Community</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--mist); margin-bottom: 12px;">Help us fill in the map.</div>
+        <div style="font-size: 15px; color: rgba(245,240,230,0.5); line-height: 1.75; margin-bottom: 28px;">Missing division? Know a historical name? Have coordinates? Mipaka is community-driven — every contribution is reviewed and credited.</div>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="#" style="background: var(--ocean); color: white; padding: 13px 32px; border-radius: 4px; font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase;">Contribute data →</a>
+          <a href="https://github.com/ceddyville/mipaka-api" target="_blank" style="background: transparent; color: var(--mist); padding: 13px 32px; border-radius: 4px; font-size: 13px; font-weight: 500; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(245,240,230,0.15);">View on GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endpoints (compact, dark) -->
+    <div style="background: var(--ink); padding: 48px 48px; text-align: center;">
+      <div style="font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ocean-lt); margin-bottom: 10px;">API Endpoints</div>
+      <div style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--mist); margin-bottom: 24px;">Consistent. RESTful. Free.</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px; max-width: 900px; margin: 0 auto; text-align: left;">
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/countries/</div>
+            <div style="font-size: 12px; color: var(--dim);">All countries with levels & eras</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/divisions/</div>
+            <div style="font-size: 12px; color: var(--dim);">Filter by country, level, parent, q</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/divisions/{id}/</div>
+            <div style="font-size: 12px; color: var(--dim);">Detail with ancestry + children</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/eras/</div>
+            <div style="font-size: 12px; color: var(--dim);">Historical eras by type, colonial power</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/names/</div>
+            <div style="font-size: 12px; color: var(--dim);">Search historical names by language, year</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 10px 16px; background: rgba(13,140,126,0.06); border-radius: 6px;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ocean-lt); min-width: 36px;">GET</span>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/api/v1/divisions/?year=1923</div>
+            <div style="font-size: 12px; color: var(--dim);">Names as they were in a given year</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="footer-brand"><span>mipaka</span>.dev — Every Border, One API</div>
+        <div class="footer-sub" style="margin-top: 8px; font-style: italic; color: rgba(245,240,230,0.3); font-size: 12px;">"Mipaka ni zaidi ya mistari kwenye ramani."</div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <div class="footer-col-label">Browse</div>
+          <a href="#countries">All Countries</a>
+          <a href="#explorer">Explorer</a>
+          <a href="#history">Historical Timeline</a>
+          <a href="#contribute">Contribute</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-label">Developers</div>
+          <a href="https://api.mipaka.dev/api/docs/" target="_blank">API Docs</a>
+          <a href="https://github.com/ceddyville/mipaka-api" target="_blank">GitHub</a>
+          <a href="https://rapidapi.com/ceddyville/api/mipaka" target="_blank">RapidAPI</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-label">Connect</div>
+          <a href="https://dev.to/ceddyville/series/37588" target="_blank">Blog</a>
+          <a href="mailto:hello@mipaka.dev">Contact</a>
+          <a href="https://buymeacoffee.com/ceddyville" target="_blank">Support</a>
+        </div>
+      </div>
+    </footer>
+
+
+      </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE SEPARATOR (preview only)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="page-separator">
+      <hr/><span>↑ NEW LANDING PAGE · ↓ API DOCS PAGE ↓</span><hr/>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE: API DOCS (sidebar + main, dark theme)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <div style="
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 56px 1fr;
+      min-height: 100vh;
+      background: var(--night);
+    ">
+      <!-- docs header -->
+      <div style="
+        grid-column: 1 / -1;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 28px;
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+      ">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="nav-mark" style="width: 30px; height: 30px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="7" height="7" rx="1" stroke="#0d8c7e" stroke-width="1.5"/>
+              <rect x="14" y="3" width="7" height="7" rx="1" stroke="#b83225" stroke-width="1.5"/>
+              <rect x="3" y="14" width="7" height="7" rx="1" stroke="#e8b030" stroke-width="1.5"/>
+              <rect x="14" y="14" width="7" height="7" rx="1" stroke="#0d8c7e" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span style="font-size: 15px; font-weight: 500; color: var(--mist);">mipaka</span>
+          <span style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em; background: rgba(13,140,126,0.12); color: var(--ocean-lt); border: 0.5px solid rgba(13,140,126,0.3); padding: 2px 8px; border-radius: 3px; text-transform: uppercase;">API Docs</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <a href="#" style="font-size: 12px; color: var(--dim); text-decoration: none;">Countries</a>
+          <a href="#" style="font-size: 12px; color: var(--dim); text-decoration: none;">Divisions</a>
+          <a href="#" style="font-size: 12px; color: var(--dim); text-decoration: none;">Eras</a>
+          <a href="#" style="font-size: 12px; color: var(--dim); text-decoration: none;">Names</a>
+          <a href="#" style="font-size: 11px; color: var(--ocean-lt); border: 0.5px solid rgba(13,140,126,0.3); padding: 5px 14px; border-radius: 4px; text-decoration: none; letter-spacing: 0.04em;">← Explorer</a>
+          <a href="https://github.com/ceddyville/mipaka-api" target="_blank" style="font-size: 11px; color: var(--ocean-lt); border: 0.5px solid rgba(13,140,126,0.3); padding: 5px 14px; border-radius: 4px; text-decoration: none; letter-spacing: 0.04em;">GitHub</a>
+        </div>
+      </div>
+
+      <!-- docs sidebar -->
+      <div style="
+        background: var(--card);
+        border-right: 1px solid var(--border);
+        padding: 24px 0;
+        overflow-y: auto;
+      ">
+        <!-- Getting Started -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Getting started</div>
+          <a href="#" style="display: flex; align-items: center; padding: 7px 20px; font-size: 13px; color: var(--ocean-lt); text-decoration: none; border-left: 2px solid var(--ocean); background: rgba(13,140,126,0.06);">Introduction</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Base URL</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Authentication</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Rate limits</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Errors</a>
+        </div>
+        <!-- Countries -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Countries</div>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> List countries
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Get country
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Top-level divs
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Country eras
+          </a>
+        </div>
+        <!-- Divisions -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Divisions</div>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> List divisions
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Get division
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Children
+          </a>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Division names
+          </a>
+        </div>
+        <!-- Eras -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Eras</div>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> List eras
+          </a>
+        </div>
+        <!-- Historical Names -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Historical Names</div>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(13,140,126,0.15); color: var(--ocean-lt); letter-spacing: 0.04em;">GET</span> Search names
+          </a>
+        </div>
+        <!-- Contributions -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Contributions</div>
+          <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(184,50,37,0.15); color: var(--earth-mid); letter-spacing: 0.04em;">POST</span> Submit data
+          </a>
+        </div>
+        <!-- Integration -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Integration</div>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">JavaScript</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Python</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">React / Next.js</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Flutter / Dart</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Use cases</a>
+        </div>
+        <!-- Reference -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; padding: 0 20px; margin-bottom: 6px;">Reference</div>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Filters & search</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Data models</a>
+          <a href="#" style="display: block; padding: 7px 20px; font-size: 13px; color: var(--dim); text-decoration: none; border-left: 2px solid transparent;">Changelog</a>
+        </div>
+      </div>
+
+      <!-- docs main -->
+      <div style="padding: 40px 56px; overflow-y: auto; max-width: 860px; color: var(--ink-dark); font-family: 'Karla', sans-serif; background: var(--bg-light);">
+
+        <!-- Intro -->
+        <div style="margin-bottom: 48px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; line-height: 1.1;">
+            Mipaka <em style="color: var(--ocean); font-style: italic;">API</em>
+          </div>
+          <p style="font-size: 15px; color: var(--ink-soft); max-width: 560px; margin-bottom: 32px; line-height: 1.7;">
+            Normalized, machine-readable administrative division data for 7 East & Central African countries. From regions down to villages, plus historical eras and place names. Open source, community-driven.
+          </p>
+
+          <!-- Base URL -->
+          <div style="display: flex; align-items: center; gap: 12px; background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;">
+            <span style="font-size: 11px; color: var(--ink-soft); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0;">Base URL</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 14px; color: var(--ocean);">https://api.mipaka.dev/api/v1</span>
+            <button style="margin-left: auto; font-size: 11px; color: var(--ink-soft); background: transparent; border: 1px solid var(--border-light); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-family: 'Karla', sans-serif;">Copy</button>
+          </div>
+
+          <!-- Open API callout -->
+          <div style="border-radius: 8px; padding: 16px 18px; background: rgba(13,140,126,0.07); border: 0.5px solid rgba(13,140,126,0.2); font-size: 13px; line-height: 1.6; color: var(--ocean); margin-bottom: 24px;">
+            <strong>Open API —</strong> All endpoints are read-only and require no authentication. Rate limited to 1,000 requests/day for anonymous traffic. Unlimited via <a href="https://rapidapi.com/ceddyville/api/mipaka" style="color: var(--ocean);">RapidAPI</a>.
+          </div>
+
+          <!-- Rate limit callout -->
+          <div style="border-radius: 8px; padding: 16px 18px; background: rgba(232,176,48,0.07); border: 0.5px solid rgba(232,176,48,0.2); font-size: 13px; line-height: 1.6; color: var(--gold); margin-bottom: 0;">
+            <strong>Contributions —</strong> The <code style="font-family:'Space Mono', monospace; font-size: 12px; color: var(--earth-mid);">POST /contributions/</code> endpoint accepts community submissions (new divisions, corrections, coordinates). All submissions go through admin review before going live.
+          </div>
+        </div>
+
+        <!-- Countries section -->
+        <div style="margin-bottom: 56px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Countries</div>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.65;">Country records include ISO codes, division levels, and historical eras. The primary entry point for exploring a country's administrative structure.</p>
+
+          <!-- Endpoint: List countries -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 0.5px solid var(--border-light);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/countries/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">List all countries with division levels & eras</span>
+            </div>
+            <div style="padding: 20px 18px;">
+              <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 10px;">Response Fields</div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">code</span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">ISO 3166-1 alpha-2 country code (e.g. <code style="font-family:monospace;font-size:11px;color:var(--ocean)">KE</code>)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">name</span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Country name in English</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">division_levels</span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">array</span>
+                <span style="color: var(--ink-soft);">Ordered list of level definitions (name, level number)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">eras</span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">array</span>
+                <span style="color: var(--ink-soft);">Historical eras (era_type, year_start, year_end, colonial_power)</span>
+              </div>
+
+              <!-- Code example -->
+              <div style="margin-top: 18px;">
+                <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+                  <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                    <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">curl</span>
+                  </div>
+                  <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/countries/
+<span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/countries/KE/</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Endpoint: Get country -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 0.5px solid var(--border-light);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/countries/<span style="color: var(--earth-mid);">{code}</span>/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Full country detail with levels & eras</span>
+            </div>
+            <div style="padding: 20px 18px;">
+              <!-- Code example: response -->
+              <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+                <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                  <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">response · 200 OK</span>
+                </div>
+                <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;">{
+  <span style="color:var(--ocean-lt);">"code"</span>: <span style="color:var(--gold);">"KE"</span>,
+  <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Kenya"</span>,
+  <span style="color:var(--ocean-lt);">"native_name"</span>: <span style="color:var(--gold);">"Jamhuri ya Kenya"</span>,
+  <span style="color:var(--ocean-lt);">"max_levels"</span>: <span style="color:#85B7EB;">3</span>,
+  <span style="color:var(--ocean-lt);">"division_levels"</span>: [
+    { <span style="color:var(--ocean-lt);">"level"</span>: <span style="color:#85B7EB;">1</span>, <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"County"</span> },
+    { <span style="color:var(--ocean-lt);">"level"</span>: <span style="color:#85B7EB;">2</span>, <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Constituency"</span> },
+    { <span style="color:var(--ocean-lt);">"level"</span>: <span style="color:#85B7EB;">3</span>, <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Ward"</span> }
+  ],
+  <span style="color:var(--ocean-lt);">"eras"</span>: [
+    { <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Pre-colonial Kenya"</span>, <span style="color:var(--ocean-lt);">"era_type"</span>: <span style="color:var(--gold);">"precolonial"</span>, <span style="color:var(--ocean-lt);">"year_end"</span>: <span style="color:#85B7EB;">1895</span> },
+    { <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"British East Africa"</span>, <span style="color:var(--ocean-lt);">"colonial_power"</span>: <span style="color:var(--gold);">"Britain"</span> }
+  ]
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Endpoint: Top-level divisions -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/countries/<span style="color: var(--earth-mid);">{code}</span>/top/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Level-1 divisions for a country</span>
+            </div>
+          </div>
+
+          <!-- Endpoint: Country eras -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/countries/<span style="color: var(--earth-mid);">{code}</span>/eras/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Historical eras for a country, chronological</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divisions section -->
+        <div style="margin-bottom: 56px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Divisions</div>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.65;">The core resource. Divisions form a self-referential tree — each division has an optional parent, creating hierarchies of unlimited depth. Filter by country, level, parent, or search by name.</p>
+
+          <!-- Endpoint: List divisions -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 0.5px solid var(--border-light);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/divisions/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">List & filter divisions</span>
+            </div>
+            <div style="padding: 20px 18px;">
+              <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 10px;">Query parameters</div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">country<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Filter by ISO code. e.g. <code style="font-family:monospace;font-size:11px;color:var(--ocean)">?country=KE</code></span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">level<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">integer</span>
+                <span style="color: var(--ink-soft);">Filter by level number (1 = top-level)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">parent<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">integer</span>
+                <span style="color: var(--ink-soft);">Filter by parent division ID</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">q<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Full-text search on division name</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">year<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">integer</span>
+                <span style="color: var(--ink-soft);">Return names as they were in a given year</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">name<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Match by historical name (e.g. <code style="font-family:monospace;font-size:11px;color:var(--ocean)">?name=Stanleyville</code>)</span>
+              </div>
+
+              <!-- curl examples -->
+              <div style="margin-top: 18px;">
+                <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+                  <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                    <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">curl</span>
+                  </div>
+                  <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/divisions/?country=KE&level=1
+<span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/divisions/?q=nairobi
+<span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/divisions/?name=Léopoldville
+<span style="color: var(--earth-mid);">curl</span> https://api.mipaka.dev/api/v1/divisions/?country=UG&level=6 <span style="color:var(--dim); font-style:italic;">// all villages</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Endpoint: Division detail -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 0.5px solid var(--border-light);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/divisions/<span style="color: var(--earth-mid);">{id}</span>/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Detail with full ancestry + children</span>
+            </div>
+            <div style="padding: 20px 18px;">
+              <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+                <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                  <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                  <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">response · 200 OK</span>
+                </div>
+                <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;">{
+  <span style="color:var(--ocean-lt);">"id"</span>: <span style="color:#85B7EB;">47</span>,
+  <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Nairobi"</span>,
+  <span style="color:var(--ocean-lt);">"level"</span>: <span style="color:#85B7EB;">1</span>,
+  <span style="color:var(--ocean-lt);">"level_name"</span>: <span style="color:var(--gold);">"County"</span>,
+  <span style="color:var(--ocean-lt);">"country"</span>: <span style="color:var(--gold);">"KE"</span>,
+  <span style="color:var(--ocean-lt);">"code"</span>: <span style="color:var(--gold);">"047"</span>,
+  <span style="color:var(--ocean-lt);">"ancestors"</span>: [],
+  <span style="color:var(--ocean-lt);">"children_count"</span>: <span style="color:#85B7EB;">17</span>,
+  <span style="color:var(--ocean-lt);">"children"</span>: [
+    { <span style="color:var(--ocean-lt);">"id"</span>: <span style="color:#85B7EB;">48</span>, <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Dagoretti North"</span>, <span style="color:var(--ocean-lt);">"level_name"</span>: <span style="color:var(--gold);">"Constituency"</span> },
+    <span style="color:var(--dim); font-style:italic;">// ... 16 more</span>
+  ],
+  <span style="color:var(--ocean-lt);">"historical_names"</span>: [
+    { <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Enkare Nairobi"</span>, <span style="color:var(--ocean-lt);">"language"</span>: <span style="color:var(--gold);">"Maa"</span>, <span style="color:var(--ocean-lt);">"era"</span>: <span style="color:var(--gold);">"Pre-colonial"</span> }
+  ]
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collapsed endpoints -->
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/divisions/<span style="color: var(--earth-mid);">{id}</span>/children/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Direct children of a division</span>
+            </div>
+          </div>
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); letter-spacing: 0.05em; min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/divisions/<span style="color: var(--earth-mid);">{id}</span>/names/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">All historical names across eras</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eras & Names -->
+        <div style="margin-bottom: 56px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Eras & Historical Names</div>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.65;">Track how place names change across historical periods — from pre-colonial kingdoms through colonial rule to modern nation-states.</p>
+
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/eras/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">All eras — filter by era_type, colonial_power</span>
+            </div>
+          </div>
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/names/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Search historical names — by language, type, year</span>
+            </div>
+          </div>
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/names/?name_type=indigenous</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Pre-colonial indigenous names only</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contributions (POST) -->
+        <div style="margin-bottom: 56px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Contributions</div>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.65;">Community-contributed data goes through admin review. Submit new divisions, corrections, coordinates, or historical names.</p>
+
+          <div style="background: var(--surface-light); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 0.5px solid var(--border-light);">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(184,50,37,0.15); color: var(--earth-mid); letter-spacing: 0.05em; min-width: 46px; text-align: center;">POST</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/contributions/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Submit a contribution for review</span>
+            </div>
+            <div style="padding: 20px 18px;">
+              <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 10px;">Request body</div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">type<span style="font-size: 9px; font-weight: 500; background: rgba(226,75,74,0.15); color: #E24B4A; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">required</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);"><code style="font-family:monospace;font-size:11px;color:var(--ocean)">new_division</code> · <code style="font-family:monospace;font-size:11px;color:var(--ocean)">correction</code> · <code style="font-family:monospace;font-size:11px;color:var(--ocean)">coordinates</code> · <code style="font-family:monospace;font-size:11px;color:var(--ocean)">historical_name</code></span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">division_id<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">integer</span>
+                <span style="color: var(--ink-soft);">Existing division to correct or add data to</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">data<span style="font-size: 9px; font-weight: 500; background: rgba(226,75,74,0.15); color: #E24B4A; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">required</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">object</span>
+                <span style="color: var(--ink-soft);">Contribution payload (varies by type)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">contributor_name<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Name for attribution (shown if approved)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 160px 80px 1fr; gap: 12px; padding: 9px 0; font-size: 12px; align-items: baseline;">
+                <span style="font-family: 'Space Mono', monospace; color: var(--ocean);">contributor_email<span style="font-size: 9px; font-weight: 500; background: rgba(154,146,120,0.15); color: var(--ink-soft); padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; margin-left: 4px; font-family: 'Karla';">optional</span></span>
+                <span style="color: var(--ink-soft); font-family: 'Space Mono', monospace; font-size: 11px;">string</span>
+                <span style="color: var(--ink-soft);">Get notified when your contribution is approved</span>
+              </div>
+
+              <div style="margin-top: 18px;">
+                <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+                  <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                    <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                    <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">curl · submit new division</span>
+                  </div>
+                  <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color: var(--earth-mid);">curl</span> -X POST https://api.mipaka.dev/api/v1/contributions/ \
+  -H <span style="color:var(--gold);">"Content-Type: application/json"</span> \
+  -d '{
+    <span style="color:var(--ocean-lt);">"type"</span>: <span style="color:var(--gold);">"new_division"</span>,
+    <span style="color:var(--ocean-lt);">"data"</span>: {
+      <span style="color:var(--ocean-lt);">"name"</span>: <span style="color:var(--gold);">"Kibra Ward"</span>,
+      <span style="color:var(--ocean-lt);">"country"</span>: <span style="color:var(--gold);">"KE"</span>,
+      <span style="color:var(--ocean-lt);">"parent_id"</span>: <span style="color:#85B7EB;">123</span>,
+      <span style="color:var(--ocean-lt);">"level"</span>: <span style="color:#85B7EB;">3</span>
+    },
+    <span style="color:var(--ocean-lt);">"contributor_name"</span>: <span style="color:var(--gold);">"Jane Wanjiku"</span>,
+    <span style="color:var(--ocean-lt);">"contributor_email"</span>: <span style="color:var(--gold);">"jane@example.com"</span>
+  }'</pre>
+                </div>
+              </div>
+
+              <div style="border-radius: 8px; padding: 14px 16px; background: rgba(13,140,126,0.07); border: 0.5px solid rgba(13,140,126,0.2); font-size: 12px; line-height: 1.6; color: var(--ocean); margin-top: 16px;">
+                <strong>Admin review —</strong> All contributions are queued for review. You'll receive an email notification when your submission is approved or if we need more information.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Integration Guide -->
+        <div style="margin-bottom: 56px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Integration Guide</div>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.65;">Drop Mipaka into your app in minutes. Here are examples for common frameworks — all endpoints return JSON with consistent pagination.</p>
+
+          <!-- JavaScript / Fetch -->
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--ink-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">⚡</span> JavaScript / Fetch
+            </div>
+            <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">app.js</span>
+              </div>
+              <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">API</span> = <span style="color:var(--gold);">"https://api.mipaka.dev/api/v1"</span>;
+
+<span style="color:var(--dim); font-style:italic;">// Get all Kenyan counties</span>
+<span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">counties</span> = <span style="color:#A78BFA;">await</span> <span style="color:var(--ocean-lt);">fetch</span>(<span style="color:var(--gold);">`${API}/divisions/?country=KE&level=1`</span>)
+  .<span style="color:var(--ocean-lt);">then</span>(<span style="color:var(--mist);">r</span> => <span style="color:var(--mist);">r</span>.<span style="color:var(--ocean-lt);">json</span>());
+
+<span style="color:var(--dim); font-style:italic;">// Build a cascading dropdown</span>
+<span style="color:#A78BFA;">async function</span> <span style="color:var(--mist);">loadChildren</span>(<span style="color:var(--mist);">parentId</span>) {
+  <span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">res</span> = <span style="color:#A78BFA;">await</span> <span style="color:var(--ocean-lt);">fetch</span>(<span style="color:var(--gold);">`${API}/divisions/${parentId}/children/`</span>);
+  <span style="color:#A78BFA;">return</span> <span style="color:var(--mist);">res</span>.<span style="color:var(--ocean-lt);">json</span>();
+}</pre>
+            </div>
+          </div>
+
+          <!-- Python / Requests -->
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--ink-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">🐍</span> Python / Requests
+            </div>
+            <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">mipaka.py</span>
+              </div>
+              <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color:#A78BFA;">import</span> <span style="color:var(--mist);">requests</span>
+
+<span style="color:var(--mist);">API</span> = <span style="color:var(--gold);">"https://api.mipaka.dev/api/v1"</span>
+
+<span style="color:var(--dim); font-style:italic;"># All Uganda villages (paginated)</span>
+<span style="color:var(--mist);">resp</span> = <span style="color:var(--mist);">requests</span>.<span style="color:var(--ocean-lt);">get</span>(<span style="color:var(--gold);">f"{API}/divisions/"</span>, <span style="color:var(--mist);">params</span>={
+    <span style="color:var(--gold);">"country"</span>: <span style="color:var(--gold);">"UG"</span>,
+    <span style="color:var(--gold);">"level"</span>: <span style="color:#85B7EB;">6</span>,
+    <span style="color:var(--gold);">"page"</span>: <span style="color:#85B7EB;">1</span>
+})
+<span style="color:var(--mist);">villages</span> = <span style="color:var(--mist);">resp</span>.<span style="color:var(--ocean-lt);">json</span>()[<span style="color:var(--gold);">"results"</span>]
+
+<span style="color:var(--dim); font-style:italic;"># Find a place by its colonial name</span>
+<span style="color:var(--mist);">result</span> = <span style="color:var(--mist);">requests</span>.<span style="color:var(--ocean-lt);">get</span>(<span style="color:var(--gold);">f"{API}/divisions/"</span>, <span style="color:var(--mist);">params</span>={
+    <span style="color:var(--gold);">"name"</span>: <span style="color:var(--gold);">"Léopoldville"</span>
+}).<span style="color:var(--ocean-lt);">json</span>()</pre>
+            </div>
+          </div>
+
+          <!-- React / Next.js -->
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--ink-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">⚛️</span> React / Next.js
+            </div>
+            <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">CountyPicker.tsx</span>
+              </div>
+              <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color:#A78BFA;">import</span> { <span style="color:var(--mist);">useState</span>, <span style="color:var(--mist);">useEffect</span> } <span style="color:#A78BFA;">from</span> <span style="color:var(--gold);">"react"</span>;
+
+<span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">API</span> = <span style="color:var(--gold);">"https://api.mipaka.dev/api/v1"</span>;
+
+<span style="color:#A78BFA;">export default function</span> <span style="color:var(--mist);">CountyPicker</span>() {
+  <span style="color:#A78BFA;">const</span> [<span style="color:var(--mist);">counties</span>, <span style="color:var(--mist);">setCounties</span>] = <span style="color:var(--ocean-lt);">useState</span>([]);
+  <span style="color:#A78BFA;">const</span> [<span style="color:var(--mist);">wards</span>, <span style="color:var(--mist);">setWards</span>] = <span style="color:var(--ocean-lt);">useState</span>([]);
+
+  <span style="color:var(--ocean-lt);">useEffect</span>(() => {
+    <span style="color:var(--ocean-lt);">fetch</span>(<span style="color:var(--gold);">`${API}/countries/KE/top/`</span>)
+      .<span style="color:var(--ocean-lt);">then</span>(<span style="color:var(--mist);">r</span> => <span style="color:var(--mist);">r</span>.<span style="color:var(--ocean-lt);">json</span>())
+      .<span style="color:var(--ocean-lt);">then</span>(<span style="color:var(--mist);">setCounties</span>);
+  }, []);
+
+  <span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">onSelect</span> = <span style="color:#A78BFA;">async</span> (<span style="color:var(--mist);">countyId</span>) => {
+    <span style="color:#A78BFA;">const</span> <span style="color:var(--mist);">data</span> = <span style="color:#A78BFA;">await</span> <span style="color:var(--ocean-lt);">fetch</span>(
+      <span style="color:var(--gold);">`${API}/divisions/${countyId}/children/`</span>
+    ).<span style="color:var(--ocean-lt);">then</span>(<span style="color:var(--mist);">r</span> => <span style="color:var(--mist);">r</span>.<span style="color:var(--ocean-lt);">json</span>());
+    <span style="color:var(--mist);">setWards</span>(<span style="color:var(--mist);">data</span>.<span style="color:var(--mist);">results</span>);
+  };
+  <span style="color:var(--dim); font-style:italic;">// ... render dropdowns</span>
+}</pre>
+            </div>
+          </div>
+
+          <!-- Flutter / Dart -->
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--ink-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">🎯</span> Flutter / Dart
+            </div>
+            <div style="background: var(--night); border-radius: 8px; border: 0.5px solid var(--border); overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 0.5px solid var(--border);">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--earth);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--gold);"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: var(--ocean);"></div>
+                <span style="font-size: 11px; color: var(--dim); margin-left: 4px; font-family: 'Space Mono', monospace;">mipaka_service.dart</span>
+              </div>
+              <pre style="padding: 18px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.85; overflow-x: auto; color: var(--dim); margin: 0;"><span style="color:#A78BFA;">import</span> <span style="color:var(--gold);">'package:http/http.dart'</span> <span style="color:#A78BFA;">as</span> <span style="color:var(--mist);">http</span>;
+<span style="color:#A78BFA;">import</span> <span style="color:var(--gold);">'dart:convert'</span>;
+
+<span style="color:#A78BFA;">class</span> <span style="color:var(--mist);">MipakaService</span> {
+  <span style="color:#A78BFA;">static const</span> <span style="color:var(--mist);">_base</span> = <span style="color:var(--gold);">"https://api.mipaka.dev/api/v1"</span>;
+
+  <span style="color:#A78BFA;">Future</span>&lt;<span style="color:var(--mist);">List</span>&gt; <span style="color:var(--ocean-lt);">getCounties</span>(<span style="color:var(--mist);">String</span> <span style="color:var(--mist);">country</span>) <span style="color:#A78BFA;">async</span> {
+    <span style="color:#A78BFA;">final</span> <span style="color:var(--mist);">res</span> = <span style="color:#A78BFA;">await</span> <span style="color:var(--mist);">http</span>.<span style="color:var(--ocean-lt);">get</span>(
+      <span style="color:var(--mist);">Uri</span>.<span style="color:var(--ocean-lt);">parse</span>(<span style="color:var(--gold);">"$_base/countries/$country/top/"</span>),
+    );
+    <span style="color:#A78BFA;">return</span> <span style="color:var(--ocean-lt);">jsonDecode</span>(<span style="color:var(--mist);">res</span>.<span style="color:var(--mist);">body</span>);
+  }
+
+  <span style="color:#A78BFA;">Future</span>&lt;<span style="color:var(--mist);">Map</span>&gt; <span style="color:var(--ocean-lt);">getDivision</span>(<span style="color:var(--mist);">int</span> <span style="color:var(--mist);">id</span>) <span style="color:#A78BFA;">async</span> {
+    <span style="color:#A78BFA;">final</span> <span style="color:var(--mist);">res</span> = <span style="color:#A78BFA;">await</span> <span style="color:var(--mist);">http</span>.<span style="color:var(--ocean-lt);">get</span>(
+      <span style="color:var(--mist);">Uri</span>.<span style="color:var(--ocean-lt);">parse</span>(<span style="color:var(--gold);">"$_base/divisions/$id/"</span>),
+    );
+    <span style="color:#A78BFA;">return</span> <span style="color:var(--ocean-lt);">jsonDecode</span>(<span style="color:var(--mist);">res</span>.<span style="color:var(--mist);">body</span>);
+  }
+}</pre>
+            </div>
+          </div>
+
+          <!-- Common use cases -->
+          <div style="margin-bottom: 8px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--ink-dark); margin-bottom: 12px;">Common use cases</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background: var(--surface-light); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 16px 18px;">
+                <div style="font-size: 13px; font-weight: 500; color: var(--ink-dark); margin-bottom: 6px;">📍 Address forms</div>
+                <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.6;">Cascading Country → Region → District → Ward dropdowns for address collection. Use <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/countries/{code}/top/</code> then <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/divisions/{id}/children/</code>.</div>
+              </div>
+              <div style="background: var(--surface-light); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 16px 18px;">
+                <div style="font-size: 13px; font-weight: 500; color: var(--ink-dark); margin-bottom: 6px;">📊 Data dashboards</div>
+                <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.6;">Map-based visualizations with region-level aggregation. Use <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/divisions/?country=KE&level=1</code> to get all counties for a choropleth.</div>
+              </div>
+              <div style="background: var(--surface-light); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 16px 18px;">
+                <div style="font-size: 13px; font-weight: 500; color: var(--ink-dark); margin-bottom: 6px;">🔍 Search autocomplete</div>
+                <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.6;">Type-ahead location search. Use <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/divisions/?q=nai</code> for fuzzy matching. Results include level and country context.</div>
+              </div>
+              <div style="background: var(--surface-light); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 16px 18px;">
+                <div style="font-size: 13px; font-weight: 500; color: var(--ink-dark); margin-bottom: 6px;">🏛️ Historical research</div>
+                <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.6;">Trace how places were named in different eras. Use <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/divisions/?year=1920</code> or <code style="font-family:monospace;font-size:11px;color:var(--ocean)">/names/?name_type=indigenous</code>.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination note -->
+          <div style="border-radius: 8px; padding: 14px 16px; background: rgba(232,176,48,0.07); border: 0.5px solid rgba(232,176,48,0.2); font-size: 12px; line-height: 1.6; color: var(--gold); margin-top: 16px;">
+            <strong>Pagination —</strong> All list endpoints return paginated results (default 50 per page). Use <code style="font-family:monospace;font-size:11px;color:var(--gold)">?page=2</code> to navigate. Response includes <code style="font-family:monospace;font-size:11px;color:var(--gold)">count</code>, <code style="font-family:monospace;font-size:11px;color:var(--gold)">next</code>, and <code style="font-family:monospace;font-size:11px;color:var(--gold)">previous</code> for easy traversal.
+          </div>
+        </div>
+
+        <!-- Health -->
+        <div style="margin-bottom: 40px;">
+          <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light);">Health</div>
+          <div style="background: var(--surface-light); border: 0.5px solid var(--border-light); border-radius: 10px; overflow: hidden;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px;">
+              <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(13,140,126,0.15); color: var(--ocean); min-width: 46px; text-align: center;">GET</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--ink-dark);">/health/</span>
+              <span style="font-size: 12px; color: var(--ink-soft); margin-left: auto;">Returns <code style="font-family:monospace;font-size:11px;color:var(--ocean)">{"status": "ok"}</code></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE SEPARATOR (preview only)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="page-separator">
+      <hr/><span>↑ API DOCS PAGE (above) · ↓ COUNTRY BROWSE PAGE (below) ↓</span><hr/>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE 1: BROWSE ALL COUNTRIES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <nav>
+      <a href="#" class="nav-logo">
+        <div class="nav-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect
+              x="3"
+              y="3"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="#0d8c7e"
+              stroke-width="1.5"
+            />
+            <rect
+              x="14"
+              y="3"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="#b83225"
+              stroke-width="1.5"
+            />
+            <rect
+              x="3"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="#e8b030"
+              stroke-width="1.5"
+            />
+            <rect
+              x="14"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="#0d8c7e"
+              stroke-width="1.5"
+            />
+          </svg>
+        </div>
+        <span class="nav-wordmark">mipaka</span>
+        <span class="nav-tagline">Every Border · One API</span>
+      </a>
+      <div class="nav-links">
+        <a href="#">Countries</a>
+        <a href="#">Explorer</a>
+        <a href="#">Timeline</a>
+        <a href="#">Contribute</a>
+        <a href="#">Blog</a>
+        <a href="#" class="nav-cta">API Docs</a>
+      </div>
+    </nav>
+
+    <div class="hero" style="padding: 56px 48px 48px">
+      <div class="hero-inner">
+        <div class="hero-label">Browse · 7 Countries</div>
+        <div class="hero-name">Administrative Divisions</div>
+        <div class="hero-native">
+          107,741 divisions across East & Central Africa
+        </div>
+        <div class="hero-tags">
+          <span class="hero-tag"><strong>107,741</strong> total divisions</span>
+          <span class="hero-tag earth-badge"
+            ><strong>48</strong> historical eras</span
+          >
+          <span class="hero-tag gold-badge"
+            ><strong>124</strong> historical names</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="shuka-stripe">
+      <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+    </div>
+
+    <div class="body-wrap">
+      <section class="content-section">
+        <div class="section-heading">All Countries</div>
+        <div class="section-body" style="margin-bottom: 24px">
+          Click a country to browse its full administrative hierarchy — from
+          regions down to the smallest village.
+        </div>
+        <div class="country-grid">
+          <a href="#kenya-page" class="country-card">
+            <div class="country-card-flag">🇰🇪</div>
+            <div class="country-card-name">Kenya</div>
+            <div class="country-card-code">KE</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>2,303</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Constituency</span>
+              <span class="country-level-tag">Ward</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇹🇿</div>
+            <div class="country-card-name">Tanzania</div>
+            <div class="country-card-code">TZ</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>4,182</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Region</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">Ward</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇺🇬</div>
+            <div class="country-card-name">Uganda</div>
+            <div class="country-card-code">UG</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>83,017</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>6</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Region</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Sub-county</span>
+              <span class="country-level-tag">Parish</span>
+              <span class="country-level-tag">Village</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇷🇼</div>
+            <div class="country-card-name">Rwanda</div>
+            <div class="country-card-code">RW</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>17,453</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>5</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">District</span>
+              <span class="country-level-tag">Sector</span>
+              <span class="country-level-tag">Cell</span>
+              <span class="country-level-tag">Village</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇧🇮</div>
+            <div class="country-card-name">Burundi</div>
+            <div class="country-card-code">BI</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>491</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">Commune</span>
+              <span class="country-level-tag">Colline</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇨🇩</div>
+            <div class="country-card-name">DR Congo</div>
+            <div class="country-card-code">CD</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>185</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>2</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">Province</span>
+              <span class="country-level-tag">Territory</span>
+            </div>
+          </a>
+
+          <a href="#" class="country-card">
+            <div class="country-card-flag">🇸🇸</div>
+            <div class="country-card-name">South Sudan</div>
+            <div class="country-card-code">SS</div>
+            <div class="country-card-stats">
+              <span class="country-card-stat"
+                ><strong>110</strong> divisions</span
+              >
+              <span class="country-card-stat"><strong>3</strong> levels</span>
+            </div>
+            <div class="country-card-levels">
+              <span class="country-level-tag">State</span>
+              <span class="country-level-tag">County</span>
+              <span class="country-level-tag">Payam</span>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE SEPARATOR (preview only)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="page-separator">
+      <hr />
+      <span>↓ Preview: Country Detail Page (Kenya) ↓</span>
+      <hr />
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE 2: COUNTRY DETAIL — KENYA
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <div class="breadcrumb">
+      <a href="#">Mipaka</a><span>›</span> <a href="#">Countries</a
+      ><span>›</span>
+      <span class="current">Kenya</span>
+    </div>
+
+    <div class="hero">
+      <div class="hero-inner">
+        <a href="#" class="hero-back">← All countries</a>
+        <div class="hero-label">🇰🇪 Kenya · KE</div>
+        <div class="hero-name">Kenya</div>
+        <div class="hero-native">Jamhuri ya Kenya</div>
+        <div class="hero-tags">
+          <span class="hero-tag"><strong>2,303</strong> divisions</span>
+          <span class="hero-tag"><strong>3</strong> levels deep</span>
+          <span class="hero-tag earth-badge"
+            ><strong>5</strong> historical eras</span
+          >
+          <span class="hero-tag gold-badge"
+            ><strong>516</strong> historical divisions</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="shuka-stripe">
+      <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+    </div>
+
+    <div class="body-wrap">
+      <div class="content-grid">
+        <div class="main-col">
+          <!-- Level flow -->
+          <section class="content-section">
+            <div class="section-heading">Administrative Hierarchy</div>
+            <div class="level-flow">
+              <span class="level-tag active">County</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">Constituency</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">Ward</span>
+            </div>
+            <div class="section-body">
+              Kenya has 47 counties established by the 2010 Constitution,
+              replacing the former 8 provinces. Each county contains
+              constituencies, which contain wards.
+            </div>
+          </section>
+
+          <!-- Brief history -->
+          <section class="content-section">
+            <div class="section-heading">Brief History</div>
+            <div class="history-block">
+              <p>Kenya's administrative boundaries have been redrawn more than any other system in East Africa. Under British colonial rule from <span class="history-year">1920</span>, the territory was divided into <span class="history-highlight">provinces</span> — a structure that persisted for nearly a century through independence in <span class="history-year">1963</span>.</p>
+              <p>The <span class="history-year">2010</span> Constitution abolished the provincial system entirely, replacing 8 provinces with <span class="history-highlight">47 counties</span> — each with an elected governor and county assembly. This devolution was the most radical administrative restructuring in Kenya's history, designed to bring government closer to the people.</p>
+              <p>Today each county is subdivided into <span class="history-highlight">constituencies</span> (for parliamentary representation) and <span class="history-highlight">wards</span> (the smallest electoral and administrative unit), as defined by the Independent Electoral and Boundaries Commission (IEBC).</p>
+            </div>
+          </section>
+
+          <!-- Stats -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-value">47</div>
+              <div class="stat-label">Counties</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">290</div>
+              <div class="stat-label">Constituencies</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">1,450</div>
+              <div class="stat-label">Wards</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">516</div>
+              <div class="stat-label">Historical</div>
+            </div>
+          </div>
+
+          <!-- Counties grid -->
+          <section class="content-section">
+            <div class="section-heading">
+              Counties
+              <span
+                style="
+                  font-family: &quot;Space Mono&quot;;
+                  font-size: 14px;
+                  color: var(--ocean);
+                  font-weight: 400;
+                "
+                >(47)</span
+              >
+            </div>
+            <div class="division-grid">
+              <a href="#nairobi-page" class="division-card">
+                <div class="division-card-name">Nairobi</div>
+                <div class="division-card-meta">
+                  <span>17 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Mombasa</div>
+                <div class="division-card-meta">
+                  <span>6 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kisumu</div>
+                <div class="division-card-meta">
+                  <span>7 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Nakuru</div>
+                <div class="division-card-meta">
+                  <span>11 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kiambu</div>
+                <div class="division-card-meta">
+                  <span>12 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Uasin Gishu</div>
+                <div class="division-card-meta">
+                  <span>6 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Machakos</div>
+                <div class="division-card-meta">
+                  <span>8 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kajiado</div>
+                <div class="division-card-meta">
+                  <span>5 constituencies</span>
+                  <span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a
+                class="division-card"
+                style="
+                  border-style: dashed;
+                  text-align: center;
+                  color: var(--ink-soft);
+                "
+              >
+                <div style="font-size: 13px; padding: 8px 0">
+                  + 39 more counties...
+                </div>
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <div class="sidebar-col">
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">At a glance</div>
+            <div class="sidebar-card-body">
+              <div class="sidebar-row">
+                <span class="sidebar-key">Country</span
+                ><span class="sidebar-val">Kenya</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Code</span
+                ><span
+                  class="sidebar-val"
+                  style="
+                    font-family: &quot;Space Mono&quot;;
+                    color: var(--ocean);
+                  "
+                  >KE</span
+                >
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Levels</span
+                ><span class="sidebar-val">3</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Divisions</span
+                ><span class="sidebar-val">2,303</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Eras</span
+                ><span class="sidebar-val">5</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Source</span
+                ><span class="sidebar-val">IEBC</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contribute-card">
+            <div class="contribute-card-title">Missing data?</div>
+            <div class="contribute-card-body">
+              Know of a missing ward, a name change, or coordinates? Help us
+              build the most complete boundary dataset for Africa.
+            </div>
+            <a href="#" class="contribute-btn">Contribute data →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE SEPARATOR (preview only)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="page-separator">
+      <hr />
+      <span>↓ Preview: Division Detail Page (Nairobi County) ↓</span>
+      <hr />
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE 3: DIVISION DETAIL — NAIROBI COUNTY
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <div class="breadcrumb">
+      <a href="#">Mipaka</a><span>›</span> <a href="#">Countries</a
+      ><span>›</span> <a href="#">Kenya</a><span>›</span>
+      <span class="current">Nairobi</span>
+    </div>
+
+    <div class="hero">
+      <div class="hero-inner">
+        <a href="#" class="hero-back">← Back to Kenya</a>
+        <div class="hero-label">🇰🇪 Kenya · County</div>
+        <div class="hero-name">Nairobi</div>
+        <div class="hero-native">Enkare Nairobi — "cool waters" in Maa</div>
+        <div class="hero-tags">
+          <span class="hero-tag"><strong>17</strong> constituencies</span>
+          <span class="hero-tag"><strong>85</strong> wards</span>
+          <span class="hero-tag gold-badge"
+            ><strong>3</strong> historical names</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="shuka-stripe">
+      <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+    </div>
+
+    <div class="body-wrap">
+      <div class="content-grid">
+        <div class="main-col">
+          <!-- Location in hierarchy -->
+          <section class="content-section">
+            <div class="section-heading">Hierarchy</div>
+            <div class="level-flow">
+              <span class="level-tag">Kenya</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag active">Nairobi County</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">17 Constituencies</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">85 Wards</span>
+            </div>
+          </section>
+
+          <!-- Brief history -->
+          <section class="content-section">
+            <div class="section-heading">Brief History</div>
+            <div class="history-block">
+              <p>The area now known as Nairobi was originally a <span class="history-highlight">Maasai watering hole</span> called <em>Enkare Nairobi</em> — "the place of cool waters" in the Maa language. The Maasai pastoralists used the swampy grasslands along the Nairobi River as a seasonal grazing ground for centuries.</p>
+              <p>In <span class="history-year">1899</span>, the British East Africa Protectorate established a railway depot here as the Uganda Railway pushed inland from Mombasa. The depot quickly grew into a supply station, and by <span class="history-year">1907</span> Nairobi had replaced Mombasa as the colonial capital — a role it has held ever since.</p>
+              <p>After independence in <span class="history-year">1963</span>, Nairobi became the capital of the Republic of Kenya. The 2010 Constitution created <span class="history-highlight">47 counties</span>, with Nairobi designated as both a county and the national capital — the only county with this dual status. Today it is divided into <span class="history-highlight">17 constituencies</span> and <span class="history-highlight">85 wards</span>.</p>
+            </div>
+          </section>
+
+          <!-- Children -->
+          <section class="content-section">
+            <div class="section-heading">
+              Constituencies
+              <span
+                style="
+                  font-family: &quot;Space Mono&quot;;
+                  font-size: 14px;
+                  color: var(--ocean);
+                  font-weight: 400;
+                "
+                >(17)</span
+              >
+            </div>
+            <div class="division-grid">
+              <a class="division-card">
+                <div class="division-card-name">Dagoretti North</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Dagoretti South</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Embakasi Central</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Embakasi East</div>
+                <div class="division-card-meta">
+                  <span>6 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Embakasi North</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Embakasi South</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Embakasi West</div>
+                <div class="division-card-meta">
+                  <span>4 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kamukunji</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kasarani</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Kibra</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Lang'ata</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Makadara</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Mathare</div>
+                <div class="division-card-meta">
+                  <span>6 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Roysambu</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Ruaraka</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Starehe</div>
+                <div class="division-card-meta">
+                  <span>6 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Westlands</div>
+                <div class="division-card-meta">
+                  <span>5 wards</span><span class="division-card-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <!-- Historical names -->
+          <section class="content-section">
+            <div class="section-heading">Historical Names</div>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <div
+                style="
+                  background: var(--surface-light);
+                  border: 1px solid var(--border-light);
+                  border-left: 3px solid var(--earth);
+                  border-radius: 8px;
+                  padding: 16px 20px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--ink-soft);
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Maasai Settlements · pre-1899
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Playfair Display&quot;, serif;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: var(--ink-dark);
+                    margin-bottom: 4px;
+                  "
+                >
+                  Enkare Nairobi
+                </div>
+                <div style="font-size: 13px; color: var(--ink-soft)">
+                  Maa · Indigenous — "Cool waters" — Maasai watering hole on the
+                  Athi Plains
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--surface-light);
+                  border: 1px solid var(--border-light);
+                  border-left: 3px solid var(--laterite);
+                  border-radius: 8px;
+                  padding: 16px 20px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--ink-soft);
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  British East Africa · 1899–1920
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Playfair Display&quot;, serif;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: var(--ink-dark);
+                    margin-bottom: 4px;
+                  "
+                >
+                  Nairobi
+                </div>
+                <div style="font-size: 13px; color: var(--ink-soft)">
+                  English · Colonial — Railway depot built 1899 — became
+                  Protectorate capital 1907
+                </div>
+              </div>
+              <div
+                style="
+                  background: var(--surface-light);
+                  border: 1px solid var(--border-light);
+                  border-left: 3px solid var(--ocean);
+                  border-radius: 8px;
+                  padding: 16px 20px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--ink-soft);
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Republic of Kenya · 1963–present
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Playfair Display&quot;, serif;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: var(--ink-dark);
+                    margin-bottom: 4px;
+                  "
+                >
+                  Nairobi
+                </div>
+                <div style="font-size: 13px; color: var(--ink-soft)">
+                  Swahili · Official — Capital of independent Kenya since 1963
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="sidebar-col">
+          <a href="#" class="parent-link-card">
+            <div class="parent-link-label">Parent country</div>
+            <div class="parent-link-name">🇰🇪 Kenya</div>
+            <div class="parent-link-sub">47 counties · 2,303 divisions</div>
+            <div class="parent-link-arrow">↑</div>
+          </a>
+
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">At a glance</div>
+            <div class="sidebar-card-body">
+              <div class="sidebar-row">
+                <span class="sidebar-key">Name</span
+                ><span class="sidebar-val">Nairobi</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Level</span
+                ><span class="sidebar-val" style="color: var(--ocean)"
+                  >County (L1)</span
+                >
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Code</span
+                ><span
+                  class="sidebar-val"
+                  style="font-family: &quot;Space Mono&quot;"
+                  >047</span
+                >
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Children</span
+                ><span class="sidebar-val">17 constituencies</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Grandchildren</span
+                ><span class="sidebar-val">85 wards</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Historical names</span
+                ><span class="sidebar-val">3</span>
+              </div>
+              <div class="sidebar-row">
+                <span class="sidebar-key">Coordinates</span
+                ><span
+                  class="sidebar-val"
+                  style="font-size: 11px; color: var(--dim)"
+                  >Not yet added</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="contribute-card">
+            <div class="contribute-card-title">Know more?</div>
+            <div class="contribute-card-body">
+              Missing ward, incorrect boundary, or have coordinates? Help us
+              build the record for Nairobi.
+            </div>
+            <a href="#" class="contribute-btn">Contribute data →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE SEPARATOR (preview only)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="page-separator">
+      <hr/><span>↓ Preview: Uganda Country Page (6 levels deep) ↓</span><hr/>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+     PAGE 4: COUNTRY DETAIL — UGANDA (6 LEVELS)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <div class="breadcrumb">
+      <a href="#">Mipaka</a><span>›</span>
+      <a href="#">Countries</a><span>›</span>
+      <span class="current">Uganda</span>
+    </div>
+
+    <div class="hero">
+      <div class="hero-inner">
+        <a href="#" class="hero-back">← All countries</a>
+        <div class="hero-label">🇺🇬 Uganda · UG</div>
+        <div class="hero-name">Uganda</div>
+        <div class="hero-native">Jamhuri ya Uganda</div>
+        <div class="hero-tags">
+          <span class="hero-tag"><strong>83,017</strong> divisions</span>
+          <span class="hero-tag"><strong>6</strong> levels deep</span>
+          <span class="hero-tag earth-badge"><strong>4</strong> historical eras</span>
+          <span class="hero-tag gold-badge"><strong>5</strong> traditional kingdoms</span>
+        </div>
+      </div>
+    </div>
+    <div class="shuka-stripe"><span class="s1"></span><span class="s2"></span><span class="s3"></span></div>
+
+    <div class="body-wrap">
+      <div class="content-grid">
+        <div class="main-col">
+
+          <!-- Level flow — 6 levels -->
+          <section class="content-section">
+            <div class="section-heading">Administrative Hierarchy</div>
+            <div class="level-flow">
+              <span class="level-tag active">Region</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">District</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">County</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">Sub-county</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">Parish</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag">Village</span>
+            </div>
+            <div class="section-body">Uganda has the deepest administrative hierarchy in East Africa — 6 levels from region down to village, with over 83,000 divisions total.</div>
+          </section>
+
+          <!-- Brief history -->
+          <section class="content-section">
+            <div class="section-heading">Brief History</div>
+            <div class="history-block">
+              <p>Before colonisation, the territory now called Uganda was home to powerful <span class="history-highlight">kingdoms</span> — Buganda, Bunyoro, Toro, Ankole, and Busoga — each with their own governance structures. The Kingdom of Buganda, from which the country takes its name, was the most centralised.</p>
+              <p>The British declared the <span class="history-highlight">Uganda Protectorate</span> in <span class="history-year">1894</span>, gradually absorbing the kingdoms into a colonial administrative system of provinces and districts. After independence in <span class="history-year">1962</span>, the kingdoms initially retained ceremonial power — until President Obote abolished them in <span class="history-year">1967</span>.</p>
+              <p>The kingdoms were restored as cultural institutions in <span class="history-year">1993</span> under Museveni, but without political authority. Today Uganda's administrative structure runs six levels deep: <span class="history-highlight">4 regions → 135+ districts → counties → sub-counties → parishes → villages</span>, making it the most granular system in the region.</p>
+            </div>
+          </section>
+
+          <!-- Stats — 6 columns -->
+          <div class="stats-row" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Regions</div></div>
+            <div class="stat-card"><div class="stat-value">135</div><div class="stat-label">Districts</div></div>
+            <div class="stat-card"><div class="stat-value">353</div><div class="stat-label">Counties</div></div>
+            <div class="stat-card"><div class="stat-value">2,184</div><div class="stat-label">Sub-counties</div></div>
+            <div class="stat-card"><div class="stat-value">10,708</div><div class="stat-label">Parishes</div></div>
+            <div class="stat-card"><div class="stat-value">69,633</div><div class="stat-label">Villages</div></div>
+          </div>
+
+          <!-- Regions grid -->
+          <section class="content-section">
+            <div class="section-heading">Regions <span style="font-family:'Space Mono'; font-size: 14px; color: var(--ocean); font-weight: 400;">(4)</span></div>
+            <div class="division-grid">
+              <a class="division-card">
+                <div class="division-card-name">Central</div>
+                <div class="division-card-meta"><span>25 districts</span><span class="division-card-arrow">→</span></div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Eastern</div>
+                <div class="division-card-meta"><span>39 districts</span><span class="division-card-arrow">→</span></div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Northern</div>
+                <div class="division-card-meta"><span>40 districts</span><span class="division-card-arrow">→</span></div>
+              </a>
+              <a class="division-card">
+                <div class="division-card-name">Western</div>
+                <div class="division-card-meta"><span>31 districts</span><span class="division-card-arrow">→</span></div>
+              </a>
+            </div>
+          </section>
+
+          <!-- Example drilldown hint -->
+          <section class="content-section">
+            <div class="section-heading">Example Drilldown</div>
+            <div class="section-body" style="margin-bottom: 16px;">Clicking through the hierarchy for a village in Kampala:</div>
+            <div class="level-flow" style="gap: 8px;">
+              <span class="level-tag" style="background: rgba(184,50,37,0.08); border-color: rgba(184,50,37,0.2); color: var(--earth);">Central</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag" style="background: rgba(184,50,37,0.08); border-color: rgba(184,50,37,0.2); color: var(--earth);">Kampala</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag" style="background: rgba(184,50,37,0.08); border-color: rgba(184,50,37,0.2); color: var(--earth);">Kampala</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag" style="background: rgba(196,114,14,0.08); border-color: rgba(196,114,14,0.2); color: var(--laterite);">Nakawa</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag" style="background: rgba(13,140,126,0.08); border-color: rgba(13,140,126,0.2); color: var(--ocean);">Naguru I</span>
+              <span class="level-arrow">→</span>
+              <span class="level-tag active">Naguru I A</span>
+            </div>
+            <div style="font-size: 12px; color: var(--ink-soft); margin-top: 10px;">Region → District → County → Sub-county → Parish → Village</div>
+          </section>
+
+        </div>
+
+        <div class="sidebar-col">
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">At a glance</div>
+            <div class="sidebar-card-body">
+              <div class="sidebar-row"><span class="sidebar-key">Country</span><span class="sidebar-val">Uganda</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Code</span><span class="sidebar-val" style="font-family:'Space Mono'; color:var(--ocean);">UG</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Levels</span><span class="sidebar-val">6</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Divisions</span><span class="sidebar-val">83,017</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Deepest</span><span class="sidebar-val">Village</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Eras</span><span class="sidebar-val">4</span></div>
+              <div class="sidebar-row"><span class="sidebar-key">Source</span><span class="sidebar-val">UBOS</span></div>
+            </div>
+          </div>
+
+          <div class="contribute-card">
+            <div class="contribute-card-title">83,017 divisions</div>
+            <div class="contribute-card-body">Uganda has the most granular data in Mipaka — all the way down to village level. Spot an error or missing village? Let us know.</div>
+            <a href="#" class="contribute-btn">Contribute data →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="footer-brand">
+          <span>mipaka</span>.dev — Every Border, One API
+        </div>
+        <div class="footer-sub">
+          Open source · MIT License · Community contributed
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <div class="footer-col-label">Browse</div>
+          <a href="#">All Countries</a>
+          <a href="#">Explorer</a>
+          <a href="#">Historical Timeline</a>
+          <a href="#">Contribute</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-label">Developers</div>
+          <a href="https://api.mipaka.dev/api/docs/">API Docs</a>
+          <a href="https://github.com/ceddyville/mipaka-api">GitHub</a>
+          <a href="https://rapidapi.com/ceddyville/api/mipaka">RapidAPI</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-label">Connect</div>
+          <a href="https://dev.to/ceddyville/series/37588">Blog</a>
+          <a href="mailto:hello@mipaka.dev">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
