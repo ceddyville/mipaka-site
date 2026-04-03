@@ -1327,9 +1327,9 @@
         <span class="accent">One <span class="accent2">API.</span></span>
       </h1>
       <p class="hero-sub">
-        <strong>Mipaka</strong> gives you normalized, developer-ready access to counties, regions, districts,
-        wards and villages — plus historical place names from pre-colonial
-        kingdoms to independence.
+        <strong>Mipaka</strong> gives you normalized, developer-ready access to
+        counties, regions, districts, wards and villages — plus historical place
+        names from pre-colonial kingdoms to independence.
       </p>
       <div class="hero-actions">
         <a href="#explorer" class="btn-hero-primary">Try it live ↓</a>
@@ -1361,7 +1361,6 @@
           ><strong>Free</strong> &amp; Open Source</span
         >
       </div>
-      <div class="maasai-stripe"></div>
     </section>
     <div class="shuka-stripe">
       <span class="s1"></span><span class="s2"></span><span class="s3"></span>
@@ -1388,7 +1387,7 @@
         regions down to the smallest village.
       </p>
       <div class="country-grid" id="coverage-grid">
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('BI')">
           <div class="country-card-flag">🇧🇮</div>
           <div class="country-card-name">Burundi</div>
           <div class="country-card-code">BI · 491 divisions · 3 levels</div>
@@ -1398,7 +1397,7 @@
             <span class="country-level-tag">Colline</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('CD')">
           <div class="country-card-flag">🇨🇩</div>
           <div class="country-card-name">DR Congo</div>
           <div class="country-card-code">CD · 185 divisions · 2 levels</div>
@@ -1407,7 +1406,7 @@
             <span class="country-level-tag">Territory</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('KE')">
           <div class="country-card-flag">🇰🇪</div>
           <div class="country-card-name">Kenya</div>
           <div class="country-card-code">KE · 2,303 divisions · 3 levels</div>
@@ -1417,7 +1416,7 @@
             <span class="country-level-tag">Ward</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('RW')">
           <div class="country-card-flag">🇷🇼</div>
           <div class="country-card-name">Rwanda</div>
           <div class="country-card-code">RW · 17,453 divisions · 5 levels</div>
@@ -1429,7 +1428,7 @@
             <span class="country-level-tag">Village</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('SS')">
           <div class="country-card-flag">🇸🇸</div>
           <div class="country-card-name">South Sudan</div>
           <div class="country-card-code">SS · 110 divisions · 3 levels</div>
@@ -1439,7 +1438,7 @@
             <span class="country-level-tag">Payam</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('TZ')">
           <div class="country-card-flag">🇹🇿</div>
           <div class="country-card-name">Tanzania</div>
           <div class="country-card-code">TZ · 4,182 divisions · 3 levels</div>
@@ -1449,7 +1448,7 @@
             <span class="country-level-tag">Ward</span>
           </div>
         </a>
-        <a href="#explorer" class="country-card">
+        <a href="#explorer" class="country-card" onclick="pickCountry('UG')">
           <div class="country-card-flag">🇺🇬</div>
           <div class="country-card-name">Uganda</div>
           <div class="country-card-code">UG · 83,017 divisions · 6 levels</div>
@@ -1654,12 +1653,12 @@
             </div>
             <div class="year-slider-wrap">
               <div class="year-label">Drag to travel through time</div>
-              <div class="year-value" id="year-display">1890</div>
+              <div class="year-value" id="year-display">1200</div>
               <input
                 type="range"
                 min="1200"
                 max="2025"
-                value="1890"
+                value="1200"
                 id="year-slider"
                 oninput="updateTimeline(this.value)"
               />
@@ -2472,7 +2471,7 @@
       }
 
       function initTimeline() {
-        updateTimeline(1890);
+        updateTimeline(1200);
       }
 
       function updateTimeline(year) {
