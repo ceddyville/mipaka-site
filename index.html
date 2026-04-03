@@ -2463,10 +2463,7 @@
         const minYear = history[0].start;
         const slider = document.getElementById("year-slider");
         slider.min = minYear;
-        slider.value = Math.max(
-          minYear,
-          Math.min(1890, history[history.length - 1].end),
-        );
+        slider.value = minYear;
         updateTimeline(slider.value);
       }
 
