@@ -536,6 +536,39 @@
         text-transform: uppercase;
         color: var(--dim);
       }
+      .system-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 0.2rem;
+      }
+      .system-tab {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        color: var(--dim);
+        border: 1px solid var(--border);
+        border-bottom: none;
+        background: transparent;
+        transition: all 0.2s;
+      }
+      .system-tab:first-child {
+        border-radius: 4px 0 0 0;
+      }
+      .system-tab:last-child {
+        border-radius: 0 4px 0 0;
+      }
+      .system-tab.active {
+        color: var(--gold-lt);
+        background: rgba(232, 176, 48, 0.08);
+        border-color: var(--gold);
+      }
+      .system-tab:hover:not(.active) {
+        color: var(--mist);
+        background: rgba(255, 255, 255, 0.03);
+      }
       .cascade-group {
         display: flex;
         flex-direction: column;
@@ -1486,6 +1519,7 @@
         <div class="explorer-left">
           <div class="cascade-panel">
             <div class="cascade-panel-title">Navigate Hierarchy</div>
+            <div id="system-tabs-container"></div>
             <div id="cascade-dropdowns">
               <div
                 style="color: var(--dim); font-size: 0.9rem; padding: 1rem 0"
@@ -1930,6 +1964,7 @@
       let selectedCountry = null;
       let cascadeLevels = []; // [{levelName, items, selectedId, selectedName}]
       let totalRequests = 0;
+      let selectedSystem = null; // null for unified countries, 'political' or 'administrative' for Kenya
 
       // ── JSON SYNTAX HIGHLIGHTER ────────────────────────────────────────────────
       function highlight(json) {
@@ -2017,15 +2052,40 @@
           .join("");
       }
 
-      // ── COUNTRY PICK ───────────────────────────────────────────────────────────
-      async function pickCountry(code) {
-        selectedCountry = countries.find((c) => c.code === code);
+      // ── SYSTEM TABS (Kenya dual hierarchy) ─────────────────────────────────
+      function hasDualSystem(country) {
+        if (!country?.division_levels) return false;
+        const systems = new Set(
+          country.division_levels
+            .filter((l) => l.level < 100)
+            .map((l) => l.system),
+        );
+        return systems.has("political") && systems.has("administrative");
+      }
+
+      function renderSystemTabs() {
+        const el = document.getElementById("system-tabs-container");
+        if (!selectedCountry || !hasDualSystem(selectedCountry)) {
+          el.innerHTML = "";
+          return;
+        }
+        el.innerHTML = `<div class="system-tabs">
+          <div class="system-tab${selectedSystem === "political" ? " active" : ""}" onclick="pickSystem('political')">Political</div>
+          <div class="system-tab${selectedSystem === "administrative" ? " active" : ""}" onclick="pickSystem('administrative')">Administrative</div>
+        </div>`;
+      }
+
+      async function pickSystem(system) {
+        selectedSystem = system;
         cascadeLevels = [];
-        renderCountryPills();
+        renderSystemTabs();
         renderCascade();
+        document.getElementById("result-card").innerHTML = "";
 
         try {
-          const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+          const items = await apiFetch(
+            `/api/v1/countries/${selectedCountry.code}/top/`,
+          );
           const levelName =
             selectedCountry.division_levels?.[0]?.name || "Level 1";
           cascadeLevels = [
@@ -2034,7 +2094,48 @@
           renderCascade();
         } catch (e) {
           document.getElementById("cascade-dropdowns").innerHTML =
-            '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load — check connection</div>';
+            '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load</div>';
+        }
+      }
+
+      // ── COUNTRY PICK ───────────────────────────────────────────────────────────
+      async function pickCountry(code) {
+        selectedCountry = countries.find((c) => c.code === code);
+        cascadeLevels = [];
+        renderCountryPills();
+
+        if (hasDualSystem(selectedCountry)) {
+          selectedSystem = "political";
+          renderSystemTabs();
+          renderCascade();
+          try {
+            const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+            const levelName =
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
+            cascadeLevels = [
+              { levelName, items, selectedId: null, selectedName: null },
+            ];
+            renderCascade();
+          } catch (e) {
+            document.getElementById("cascade-dropdowns").innerHTML =
+              '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load — check connection</div>';
+          }
+        } else {
+          selectedSystem = null;
+          renderSystemTabs();
+          renderCascade();
+          try {
+            const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+            const levelName =
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
+            cascadeLevels = [
+              { levelName, items, selectedId: null, selectedName: null },
+            ];
+            renderCascade();
+          } catch (e) {
+            document.getElementById("cascade-dropdowns").innerHTML =
+              '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load — check connection</div>';
+          }
         }
       }
 
@@ -2058,18 +2159,15 @@
         // If children exist, fetch and add next level
         if (selected && selected.children_count > 0) {
           try {
-            const children = await apiFetch(
-              `/api/v1/divisions/${id}/children/`,
-            );
+            let childUrl = `/api/v1/divisions/${id}/children/`;
+            if (selectedSystem) {
+              childUrl += `?child_system=${selectedSystem}`;
+            }
+            const children = await apiFetch(childUrl);
             if (children.length > 0) {
-              const nextLevelNum = (selected.level || levelIdx + 1) + 1;
-              const nextLevelDef = selectedCountry.division_levels?.find(
-                (l) => l.level === nextLevelNum,
-              );
               const nextLevelName =
-                nextLevelDef?.name ||
                 children[0]?.level_name ||
-                `Level ${nextLevelNum}`;
+                `Level ${(selected.level || levelIdx + 1) + 1}`;
               cascadeLevels.push({
                 levelName: nextLevelName,
                 items: children,
