@@ -2157,7 +2157,8 @@
         renderCascade();
 
         // If children exist, fetch and add next level
-        if (selected && selected.children_count > 0) {
+        // When a system filter is active, always try (flat hierarchy fallback)
+        if (selected && (selected.children_count > 0 || selectedSystem)) {
           try {
             let childUrl = `/api/v1/divisions/${id}/children/`;
             if (selectedSystem) {
