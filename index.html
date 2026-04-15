@@ -2198,7 +2198,7 @@
             const opts = lvl.items
               .map(
                 (d) =>
-                  `<option value="${d.id}"${d.id === lvl.selectedId ? " selected" : ""}>${d.name}${d.children_count > 0 ? ` (${d.children_count})` : ""}</option>`,
+                  `<option value="${d.id}"${d.id === lvl.selectedId ? " selected" : ""}>${d.name}</option>`,
               )
               .join("");
             return `<div class="cascade-group" style="animation-delay:${i * 0.08}s">
