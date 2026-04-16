@@ -1988,18 +1988,18 @@
         label.textContent = `Browse · ${countries.length} Countries`;
         grid.innerHTML = countries.map(c => {
           const currentLevels = (c.division_levels || []).filter(l => l.level < 100);
+          const cardLevels = currentLevels.filter(l => l.system !== "political");
           const totalDivisions = currentLevels.reduce((sum, l) => sum + (l.count || 0), 0);
-          const levelCount = currentLevels.length;
           const displayName = DISPLAY_NAME[c.code] || c.name;
           const flag = FLAG_EMOJI[c.code] || "";
-          const tags = currentLevels.map(l => {
+          const tags = cardLevels.map(l => {
             const cnt = l.count != null ? ` (${l.count.toLocaleString()})` : "";
             return `<span class="country-level-tag">${l.name}${cnt}</span>`;
           }).join("");
           return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
             <div class="country-card-flag">${flag}</div>
             <div class="country-card-name">${displayName}</div>
-            <div class="country-card-code">${c.code} · ${totalDivisions.toLocaleString()} divisions · ${levelCount} levels</div>
+            <div class="country-card-code">${c.code} · ${totalDivisions.toLocaleString()} divisions · ${cardLevels.length} levels</div>
             <div class="country-card-levels">${tags}</div>
           </a>`;
         }).join("");
