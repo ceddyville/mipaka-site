@@ -1401,8 +1401,8 @@
 
     <!-- COUNTRIES -->
     <section class="coverage-section" id="countries">
-      <div class="section-label" style="color: var(--ocean)">
-        Browse · 7 Countries
+      <div class="section-label" style="color: var(--ocean)" id="countries-label">
+        Browse · Countries
       </div>
       <h2 class="section-title" style="color: var(--ink-dark)">
         Built for the region.
@@ -1420,84 +1420,7 @@
         regions down to the smallest village.
       </p>
       <div class="country-grid" id="coverage-grid">
-        <a href="#explorer" class="country-card" onclick="pickCountry('BI')">
-          <div class="country-card-flag">🇧🇮</div>
-          <div class="country-card-name">Burundi</div>
-          <div class="country-card-code">BI · 491 divisions · 3 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">Province</span>
-            <span class="country-level-tag">Commune</span>
-            <span class="country-level-tag">Colline</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('CD')">
-          <div class="country-card-flag">🇨🇩</div>
-          <div class="country-card-name">DR Congo</div>
-          <div class="country-card-code">CD · 185 divisions · 2 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">Province</span>
-            <span class="country-level-tag">Territory</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('KE')">
-          <div class="country-card-flag">🇰🇪</div>
-          <div class="country-card-name">Kenya</div>
-          <div class="country-card-code">KE · 13,160 divisions · 7 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">County</span>
-            <span class="country-level-tag">Constituency</span>
-            <span class="country-level-tag">Ward</span>
-            <span class="country-level-tag">Sub-county</span>
-            <span class="country-level-tag">Division</span>
-            <span class="country-level-tag">Location</span>
-            <span class="country-level-tag">Sub-location</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('RW')">
-          <div class="country-card-flag">🇷🇼</div>
-          <div class="country-card-name">Rwanda</div>
-          <div class="country-card-code">RW · 17,453 divisions · 5 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">Province</span>
-            <span class="country-level-tag">District</span>
-            <span class="country-level-tag">Sector</span>
-            <span class="country-level-tag">Cell</span>
-            <span class="country-level-tag">Village</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('SS')">
-          <div class="country-card-flag">🇸🇸</div>
-          <div class="country-card-name">South Sudan</div>
-          <div class="country-card-code">SS · 110 divisions · 3 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">State</span>
-            <span class="country-level-tag">County</span>
-            <span class="country-level-tag">Payam</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('TZ')">
-          <div class="country-card-flag">🇹🇿</div>
-          <div class="country-card-name">Tanzania</div>
-          <div class="country-card-code">TZ · 4,182 divisions · 3 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">Region</span>
-            <span class="country-level-tag">District</span>
-            <span class="country-level-tag">Ward</span>
-          </div>
-        </a>
-        <a href="#explorer" class="country-card" onclick="pickCountry('UG')">
-          <div class="country-card-flag">🇺🇬</div>
-          <div class="country-card-name">Uganda</div>
-          <div class="country-card-code">UG · 83,017 divisions · 6 levels</div>
-          <div class="country-card-levels">
-            <span class="country-level-tag">Region</span>
-            <span class="country-level-tag">District</span>
-            <span class="country-level-tag">County</span>
-            <span class="country-level-tag">Sub-county</span>
-            <span class="country-level-tag">Parish</span>
-            <span class="country-level-tag">Village</span>
-          </div>
-        </a>
+        <!-- Populated dynamically from API -->
       </div>
     </section>
 
@@ -1960,6 +1883,12 @@
         SS: '<img src="https://flagicons.lipis.dev/flags/4x3/ss.svg" style="width:22px;height:16px;border-radius:2px;vertical-align:middle;box-shadow:0 1px 2px rgba(0,0,0,.4);">',
       };
 
+      const FLAG_EMOJI = {
+        BI: "🇧🇮", CD: "🇨🇩", KE: "🇰🇪", RW: "🇷🇼",
+        SS: "🇸🇸", TZ: "🇹🇿", UG: "🇺🇬",
+      };
+      const DISPLAY_NAME = { CD: "DR Congo" };
+
       let countries = [];
       let selectedCountry = null;
       let cascadeLevels = []; // [{levelName, items, selectedId, selectedName}]
@@ -2031,6 +1960,7 @@
         try {
           countries = await apiFetch("/api/v1/countries/");
           countries.sort((a, b) => a.name.localeCompare(b.name));
+          renderCountryCards();
           renderCountryPills();
           initTimeline();
         } catch (e) {
@@ -2050,6 +1980,29 @@
     </div>`,
           )
           .join("");
+      }
+
+      function renderCountryCards() {
+        const grid = document.getElementById("coverage-grid");
+        const label = document.getElementById("countries-label");
+        label.textContent = `Browse · ${countries.length} Countries`;
+        grid.innerHTML = countries.map(c => {
+          const currentLevels = (c.division_levels || []).filter(l => l.level < 100);
+          const totalDivisions = currentLevels.reduce((sum, l) => sum + (l.count || 0), 0);
+          const levelCount = currentLevels.length;
+          const displayName = DISPLAY_NAME[c.code] || c.name;
+          const flag = FLAG_EMOJI[c.code] || "";
+          const tags = currentLevels.map(l => {
+            const cnt = l.count != null ? ` (${l.count.toLocaleString()})` : "";
+            return `<span class="country-level-tag">${l.name}${cnt}</span>`;
+          }).join("");
+          return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
+            <div class="country-card-flag">${flag}</div>
+            <div class="country-card-name">${displayName}</div>
+            <div class="country-card-code">${c.code} · ${totalDivisions.toLocaleString()} divisions · ${levelCount} levels</div>
+            <div class="country-card-levels">${tags}</div>
+          </a>`;
+        }).join("");
       }
 
       // ── SYSTEM TABS (Kenya dual hierarchy) ─────────────────────────────────
