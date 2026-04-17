@@ -625,6 +625,38 @@
         color: var(--gold-lt);
         margin-bottom: 0.4rem;
       }
+      .result-card-current {
+        font-size: 0.78rem;
+        color: var(--ocean-lt);
+        margin-bottom: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        background: rgba(13, 140, 126, 0.08);
+        border-left: 2px solid var(--ocean);
+        border-radius: 2px;
+      }
+      .result-card-current strong {
+        color: var(--gold-lt);
+      }
+      .era-summary {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.7rem;
+        background: rgba(13, 140, 126, 0.06);
+        border-left: 2px solid var(--ocean);
+        border-radius: 2px;
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+        line-height: 1.4;
+      }
+      .era-summary-flag {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .era-summary-text {
+        flex: 1;
+      }
       .result-card-meta {
         display: flex;
         flex-wrap: wrap;
@@ -1401,7 +1433,11 @@
 
     <!-- COUNTRIES -->
     <section class="coverage-section" id="countries">
-      <div class="section-label" style="color: var(--ocean)" id="countries-label">
+      <div
+        class="section-label"
+        style="color: var(--ocean)"
+        id="countries-label"
+      >
         Browse · Countries
       </div>
       <h2 class="section-title" style="color: var(--ink-dark)">
@@ -1443,6 +1479,7 @@
           <div class="cascade-panel">
             <div class="cascade-panel-title">Navigate Hierarchy</div>
             <div id="system-tabs-container"></div>
+            <div id="era-dropdown-container"></div>
             <div id="cascade-dropdowns">
               <div
                 style="color: var(--dim); font-size: 0.9rem; padding: 1rem 0"
@@ -1884,8 +1921,13 @@
       };
 
       const FLAG_EMOJI = {
-        BI: "🇧🇮", CD: "🇨🇩", KE: "🇰🇪", RW: "🇷🇼",
-        SS: "🇸🇸", TZ: "🇹🇿", UG: "🇺🇬",
+        BI: "🇧🇮",
+        CD: "🇨🇩",
+        KE: "🇰🇪",
+        RW: "🇷🇼",
+        SS: "🇸🇸",
+        TZ: "🇹🇿",
+        UG: "🇺🇬",
       };
       const DISPLAY_NAME = { CD: "DR Congo" };
 
@@ -1894,6 +1936,7 @@
       let cascadeLevels = []; // [{levelName, items, selectedId, selectedName}]
       let totalRequests = 0;
       let selectedSystem = null; // null for unified countries, 'political' or 'administrative' for Kenya
+      let selectedEra = null; // null = current divisions, era object = historical
 
       // ── JSON SYNTAX HIGHLIGHTER ────────────────────────────────────────────────
       function highlight(json) {
@@ -1986,23 +2029,35 @@
         const grid = document.getElementById("coverage-grid");
         const label = document.getElementById("countries-label");
         label.textContent = `Browse · ${countries.length} Countries`;
-        grid.innerHTML = countries.map(c => {
-          const currentLevels = (c.division_levels || []).filter(l => l.level < 100);
-          const cardLevels = currentLevels.filter(l => l.system !== "political");
-          const totalDivisions = currentLevels.reduce((sum, l) => sum + (l.count || 0), 0);
-          const displayName = DISPLAY_NAME[c.code] || c.name;
-          const flag = FLAG_EMOJI[c.code] || "";
-          const tags = cardLevels.map(l => {
-            const cnt = l.count != null ? ` (${l.count.toLocaleString()})` : "";
-            return `<span class="country-level-tag">${l.name}${cnt}</span>`;
-          }).join("");
-          return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
+        grid.innerHTML = countries
+          .map((c) => {
+            const currentLevels = (c.division_levels || []).filter(
+              (l) => l.level < 100,
+            );
+            const cardLevels = currentLevels.filter(
+              (l) => l.system !== "political",
+            );
+            const totalDivisions = currentLevels.reduce(
+              (sum, l) => sum + (l.count || 0),
+              0,
+            );
+            const displayName = DISPLAY_NAME[c.code] || c.name;
+            const flag = FLAG_EMOJI[c.code] || "";
+            const tags = cardLevels
+              .map((l) => {
+                const cnt =
+                  l.count != null ? ` (${l.count.toLocaleString()})` : "";
+                return `<span class="country-level-tag">${l.name}${cnt}</span>`;
+              })
+              .join("");
+            return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
             <div class="country-card-flag">${flag}</div>
             <div class="country-card-name">${displayName}</div>
             <div class="country-card-code">${c.code} · ${totalDivisions.toLocaleString()} divisions · ${cardLevels.length} levels</div>
             <div class="country-card-levels">${tags}</div>
           </a>`;
-        }).join("");
+          })
+          .join("");
       }
 
       // ── SYSTEM TABS (Kenya dual hierarchy) ─────────────────────────────────
@@ -2018,7 +2073,11 @@
 
       function renderSystemTabs() {
         const el = document.getElementById("system-tabs-container");
-        if (!selectedCountry || !hasDualSystem(selectedCountry)) {
+        if (
+          !selectedCountry ||
+          !hasDualSystem(selectedCountry) ||
+          selectedEra
+        ) {
           el.innerHTML = "";
           return;
         }
@@ -2028,10 +2087,160 @@
         </div>`;
       }
 
+      // ── ERA DROPDOWN ───────────────────────────────────────────────────────────
+      function countryFlag(code) {
+        if (!code || code.length !== 2) return "";
+        return String.fromCodePoint(
+          ...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65),
+        );
+      }
+
+      function eraFlag(era) {
+        const colonialFlags = {
+          british: "\u{1F1EC}\u{1F1E7}", // 🇬🇧
+          belgian: "\u{1F1E7}\u{1F1EA}", // 🇧🇪
+          german: "\u{1F1E9}\u{1F1EA}", // 🇩🇪
+          french: "\u{1F1EB}\u{1F1F7}", // 🇫🇷
+          italian: "\u{1F1EE}\u{1F1F9}", // 🇮🇹
+          portuguese: "\u{1F1F5}\u{1F1F9}", // 🇵🇹
+        };
+        if (era.colonial_power && colonialFlags[era.colonial_power]) {
+          return colonialFlags[era.colonial_power];
+        }
+        if (era.era_type === "precolonial") return "\u{1F3DB}\uFE0F"; // 🏛️
+        return countryFlag(era.country_code || selectedCountry?.code);
+      }
+
+      function renderEraDropdown() {
+        const el = document.getElementById("era-dropdown-container");
+        if (!selectedCountry) {
+          el.innerHTML = "";
+          return;
+        }
+        const eras = (selectedCountry.eras || []).filter(
+          (e) => e.era_type !== "current",
+        );
+        if (eras.length === 0) {
+          el.innerHTML = "";
+          return;
+        }
+        const grouped = {};
+        for (const e of eras) {
+          const t = e.era_type;
+          if (!grouped[t]) grouped[t] = [];
+          grouped[t].push(e);
+        }
+        const typeLabel = {
+          precolonial: "Pre-colonial",
+          colonial: "Colonial",
+          independence: "Independence",
+        };
+        let opts = '<option value="">Current boundaries</option>';
+        for (const t of ["precolonial", "colonial", "independence"]) {
+          if (!grouped[t]) continue;
+          opts += `<optgroup label="${typeLabel[t] || t}">`;
+          for (const e of grouped[t]) {
+            const sel = selectedEra?.id === e.id ? " selected" : "";
+            const range = e.ended
+              ? `${e.started}–${e.ended}`
+              : `${e.started}–present`;
+            const flag = eraFlag(e);
+            opts += `<option value="${e.id}"${sel}>${flag} ${e.name} (${range})</option>`;
+          }
+          opts += "</optgroup>";
+        }
+        // Build summary for selected era
+        let summaryHtml = "";
+        if (selectedEra && selectedEra.notes) {
+          const flag = eraFlag(selectedEra);
+          summaryHtml = `<div class="era-summary">
+            <span class="era-summary-flag">${flag}</span>
+            <span class="era-summary-text">${selectedEra.notes}</span>
+          </div>`;
+        }
+        el.innerHTML = `<div class="cascade-group" style="margin-bottom:0.6rem">
+          <label class="cascade-label">Historical Era</label>
+          <select class="cascade-select" onchange="onEraChange(this)">${opts}</select>
+          ${summaryHtml}
+        </div>`;
+      }
+
+      async function onEraChange(selectEl) {
+        const eraId = selectEl.value;
+        cascadeLevels = [];
+        document.getElementById("result-card").innerHTML = "";
+        if (!eraId) {
+          selectedEra = null;
+          selectedSystem = hasDualSystem(selectedCountry) ? "political" : null;
+          renderSystemTabs();
+          renderCascade();
+          // Reload current top-level
+          try {
+            const items = await apiFetch(
+              `/api/v1/countries/${selectedCountry.code}/top/`,
+            );
+            const levelName =
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
+            cascadeLevels = [
+              { levelName, items, selectedId: null, selectedName: null },
+            ];
+            renderCascade();
+          } catch (e) {
+            /* silent */
+          }
+          return;
+        }
+        const allEras = selectedCountry.eras || [];
+        selectedEra = allEras.find((e) => String(e.id) === String(eraId));
+        selectedSystem = null;
+        renderSystemTabs();
+        renderCascade();
+        try {
+          const divs = await apiFetch(
+            `/api/v1/divisions/?country=${selectedCountry.code}&era=${eraId}&include_historical=true`,
+          );
+          if (divs.length > 0) {
+            // Group by level, pick the top (smallest) level
+            const byLevel = {};
+            for (const d of divs) {
+              if (!byLevel[d.level]) byLevel[d.level] = [];
+              byLevel[d.level].push(d);
+            }
+            const levels = Object.keys(byLevel)
+              .map(Number)
+              .sort((a, b) => a - b);
+            const topLevel = levels[0];
+            const topItems = byLevel[topLevel];
+            const levelName = topItems[0]?.level_name || `Level ${topLevel}`;
+            const eraLabel = selectedEra ? selectedEra.name : "";
+            cascadeLevels = [
+              {
+                levelName: `${levelName} — ${eraLabel}`,
+                items: topItems,
+                selectedId: null,
+                selectedName: null,
+              },
+            ];
+            renderCascade();
+          } else {
+            document.getElementById("cascade-dropdowns").innerHTML =
+              `<div style="padding:1.2rem 0;font-size:.85rem">
+                <div style="color:var(--ink-soft);margin-bottom:.4rem">No historical divisions available for <strong>${selectedEra.name}</strong> yet.</div>
+                <div style="color:var(--dim);font-size:.78rem">We're working on gathering this data — it will be uploaded as soon as it's available.</div>
+              </div>`;
+          }
+        } catch (e) {
+          document.getElementById("cascade-dropdowns").innerHTML =
+            '<div style="padding:1rem 0;color:var(--earth);font-size:.85rem">Failed to load</div>';
+        }
+      }
+
       async function pickSystem(system) {
         selectedSystem = system;
+        selectedEra = null;
         cascadeLevels = [];
         renderSystemTabs();
+        renderEraDropdown();
         renderCascade();
         document.getElementById("result-card").innerHTML = "";
 
@@ -2055,7 +2264,9 @@
       async function pickCountry(code) {
         selectedCountry = countries.find((c) => c.code === code);
         cascadeLevels = [];
+        selectedEra = null;
         renderCountryPills();
+        renderEraDropdown();
 
         if (hasDualSystem(selectedCountry)) {
           selectedSystem = "political";
@@ -2114,9 +2325,10 @@
         if (selected && (selected.children_count > 0 || selectedSystem)) {
           try {
             let childUrl = `/api/v1/divisions/${id}/children/`;
-            if (selectedSystem) {
-              childUrl += `?child_system=${selectedSystem}`;
-            }
+            const params = [];
+            if (selectedSystem) params.push(`child_system=${selectedSystem}`);
+            if (selectedEra) params.push("include_historical=true");
+            if (params.length) childUrl += "?" + params.join("&");
             const children = await apiFetch(childUrl);
             if (children.length > 0) {
               const nextLevelName =
@@ -2179,13 +2391,30 @@
           if (lvl.selectedName) pathParts.push(lvl.selectedName);
         }
 
+        // For historical divisions, extract "currently called" from description
+        let currentlyHtml = "";
+        if (selectedEra && division.description) {
+          const desc = division.description;
+          const succMatch = desc.match(/Successor[s]?:\s*([^.]+)/i);
+          if (succMatch) {
+            currentlyHtml = `<div class="result-card-current">Currently → <strong>${succMatch[1].trim()}</strong></div>`;
+          }
+        }
+        // Show era badge for historical divisions
+        let eraBadge = "";
+        if (division.era_name) {
+          eraBadge = `<div class="rcm" style="border-color:var(--ocean)">Era <span style="color:var(--ocean-lt)">${division.era_name}</span></div>`;
+        }
+
         el.innerHTML = `<div class="result-card">
       <div class="result-card-name">${division.name}</div>
+      ${currentlyHtml}
       <div class="result-card-meta">
         <div class="rcm">Level <span>${division.level_name || ""}</span></div>
         ${division.code ? `<div class="rcm">Code <span>${division.code}</span></div>` : ""}
         <div class="rcm">Children <span>${division.children_count ?? 0}</span></div>
         <div class="rcm">ID <span>${division.id}</span></div>
+        ${eraBadge}
       </div>
       <div class="result-card-path">
         ${pathParts.map((p, i) => (i < pathParts.length - 1 ? `<span>${p}</span><span class="rcp-sep">›</span>` : `<span style="color:var(--gold-lt)">${p}</span>`)).join("")}
