@@ -2448,7 +2448,7 @@
       async function onEraGroupChange(selectEl) {
         const groupKey = selectEl.value;
         cascadeLevels = [];
-        document.getElementById("result-card").innerHTML = "";
+        renderCountryOverview();
         if (!groupKey) {
           selectedEra = null;
           selectedEraGroup = null;
@@ -2457,9 +2457,11 @@
           renderEraDropdown();
           renderCascade();
           try {
-            const items = await apiFetch(
-              `/api/v1/countries/${selectedCountry.code}/top/`,
+            const res = await fetch(
+              API + `/api/v1/countries/${selectedCountry.code}/top/`,
             );
+            const data = await res.json();
+            const items = data.results || data;
             const levelName =
               selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
@@ -2540,12 +2542,14 @@
         renderSystemTabs();
         renderEraDropdown();
         renderCascade();
-        document.getElementById("result-card").innerHTML = "";
+        renderCountryOverview();
 
         try {
-          const items = await apiFetch(
-            `/api/v1/countries/${selectedCountry.code}/top/`,
+          const res = await fetch(
+            API + `/api/v1/countries/${selectedCountry.code}/top/`,
           );
+          const data = await res.json();
+          const items = data.results || data;
           const levelName =
             selectedCountry.division_levels?.[0]?.tier || "Level 1";
           cascadeLevels = [
@@ -2581,7 +2585,9 @@
           renderSystemTabs();
           renderCascade();
           try {
-            const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+            const res = await fetch(API + `/api/v1/countries/${code}/top/`);
+            const data = await res.json();
+            const items = data.results || data;
             const levelName =
               selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
@@ -2597,7 +2603,9 @@
           renderSystemTabs();
           renderCascade();
           try {
-            const items = await apiFetch(`/api/v1/countries/${code}/top/`);
+            const res = await fetch(API + `/api/v1/countries/${code}/top/`);
+            const data = await res.json();
+            const items = data.results || data;
             const levelName =
               selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
@@ -2702,29 +2710,39 @@
       // ── COUNTRY OVERVIEW CARD ──────────────────────────────────────────────────
       function renderCountryOverview() {
         const el = document.getElementById("result-card");
-        if (!selectedCountry) { el.innerHTML = ""; return; }
+        if (!selectedCountry) {
+          el.innerHTML = "";
+          return;
+        }
         const c = selectedCountry;
         const flag = FLAG_EMOJI[c.code] || "";
         const displayName = DISPLAY_NAME[c.code] || c.name;
-        const nativeName = c.native_name && c.native_name !== c.name
-          ? `<div class="country-overview-native">${c.native_name}</div>` : "";
-        const tiers = (c.division_levels || []);
+        const nativeName =
+          c.native_name && c.native_name !== c.name
+            ? `<div class="country-overview-native">${c.native_name}</div>`
+            : "";
+        const tiers = c.division_levels || [];
         const total = tiers.reduce((s, l) => s + (l.count || 0), 0);
-        const tierRows = tiers.map(l => {
-          const sys = l.system.replace(/_/g, " ").replace("and", "&");
-          const cnt = l.count != null ? l.count.toLocaleString() : "-";
-          return `<div class="country-tier-row">
+        const tierRows = tiers
+          .map((l) => {
+            const sys = l.system.replace(/_/g, " ").replace("and", "&");
+            const cnt = l.count != null ? l.count.toLocaleString() : "-";
+            return `<div class="country-tier-row">
             <span class="country-tier-name">${l.tier}</span>
             <span class="country-tier-system">${sys}</span>
             <span class="country-tier-count">${cnt}</span>
           </div>`;
-        }).join("");
+          })
+          .join("");
         el.innerHTML = `<div class="country-overview">
           <div class="country-overview-name">${flag} ${displayName}</div>
           ${nativeName}
           <div class="country-overview-summary">${c.overview || ""} · ${total.toLocaleString()} divisions</div>
           <div class="country-overview-tiers">${tierRows}</div>
         </div>`;
+        // Show the country endpoint in the API panel
+        updateUrlBar(`/api/v1/countries/${c.code}/`);
+        updateJsonViewer(c, 0);
       }
 
       // ── RESULT CARD ────────────────────────────────────────────────────────────
