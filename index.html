@@ -520,6 +520,8 @@
       .explorer-left,
       .explorer-right {
         background: var(--card);
+        min-width: 0;
+        overflow: hidden;
       }
 
       /* cascading dropdowns */
@@ -637,25 +639,158 @@
       .result-card-current strong {
         color: var(--gold-lt);
       }
-      .era-summary {
+      .result-card-desc {
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+        line-height: 1.5;
+        margin-bottom: 0.6rem;
+        padding: 0.4rem 0.6rem;
+        background: rgba(184, 50, 37, 0.04);
+        border-left: 2px solid var(--earth);
+        border-radius: 2px;
+      }
+      .result-card-succession {
         display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-        padding: 0.5rem 0.7rem;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.6rem;
         background: rgba(13, 140, 126, 0.06);
         border-left: 2px solid var(--ocean);
         border-radius: 2px;
+        font-size: 0.75rem;
+        line-height: 1.5;
+      }
+      .succ-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.3rem;
+      }
+      .succ-label {
+        color: var(--dim);
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+      }
+      .succ-value {
+        color: var(--ocean-lt);
+        font-weight: 600;
+      }
+      .succ-era {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--dim);
+        margin-left: 0.2rem;
+      }
+      .succ-era::before {
+        content: "(";
+      }
+      .succ-era::after {
+        content: ")";
+      }
+      .succ-arrow {
+        color: var(--dim);
+        margin: 0 0.2rem;
+      }
+      .era-summary {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+        margin-top: 0.5rem;
+        padding: 0.6rem 0.7rem;
+        background: rgba(13, 140, 126, 0.08);
+        border-left: 2px solid var(--ocean);
+        border-radius: 2px;
         font-size: 0.78rem;
-        color: var(--ink-soft);
+        color: rgba(240, 236, 228, 0.78);
         line-height: 1.4;
+      }
+      .era-flag-img {
+        width: 48px;
+        height: auto;
+        border-radius: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        flex-shrink: 0;
+      }
+      .era-flag-emoji {
+        font-size: 1.8rem;
+        flex-shrink: 0;
       }
       .era-summary-flag {
         font-size: 1.1rem;
         flex-shrink: 0;
       }
+      .era-summary-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+      .era-summary-title {
+        font-weight: 600;
+        color: rgba(240, 236, 228, 0.95);
+        font-size: 0.82rem;
+      }
+      .era-summary-range {
+        font-family: "Space Mono", monospace;
+        font-size: 0.68rem;
+        color: var(--ocean);
+        letter-spacing: 0.03em;
+      }
+      .era-summary-notes {
+        color: rgba(240, 236, 228, 0.68);
+        font-size: 0.75rem;
+        line-height: 1.5;
+        margin-top: 0.2rem;
+      }
+      .era-summary-source {
+        font-size: 0.68rem;
+        color: var(--ocean);
+        text-decoration: none;
+        margin-top: 0.15rem;
+        opacity: 0.8;
+      }
+      .era-summary-source:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
       .era-summary-text {
         flex: 1;
+      }
+      .era-tabs {
+        display: flex;
+        gap: 0.3rem;
+        margin-top: 0.45rem;
+        flex-wrap: wrap;
+      }
+      .era-tab {
+        font-family: "Space Mono", monospace;
+        font-size: 0.68rem;
+        padding: 0.25rem 0.55rem;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        background: transparent;
+        color: var(--ink-soft);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+      .era-tab:hover {
+        border-color: var(--ocean);
+        color: var(--ocean);
+      }
+      .era-tab-active {
+        background: var(--ocean);
+        border-color: var(--ocean);
+        color: #fff;
+      }
+      .era-tab-active:hover {
+        background: var(--ocean-lt);
+        border-color: var(--ocean-lt);
+        color: #fff;
       }
       .result-card-meta {
         display: flex;
@@ -762,7 +897,9 @@
         padding: 1rem;
         max-height: 340px;
         overflow-y: auto;
-        white-space: pre;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
         scrollbar-width: thin;
         scrollbar-color: var(--earth) transparent;
       }
@@ -2111,6 +2248,57 @@
         return countryFlag(era.country_code || selectedCountry?.code);
       }
 
+      function eraFlagImg(era) {
+        if (era.flag_url) {
+          return `<img src="${era.flag_url}" alt="${era.name} flag" class="era-flag-img">`;
+        }
+        return `<span class="era-flag-emoji">${eraFlag(era)}</span>`;
+      }
+
+      // Group eras into parent groups with sub-periods
+      function buildEraGroups(eras) {
+        const groups = [];
+        const groupMap = {};
+        const sorted = [...eras].sort((a, b) => {
+          const ya = parseInt(a.started) || 0;
+          const yb = parseInt(b.started) || 0;
+          return ya - yb || a.id - b.id;
+        });
+        for (const e of sorted) {
+          // Detect group key: "Name — Sub" or "Name (Sub)" or standalone
+          let groupKey, subLabel;
+          const dashIdx = e.name.indexOf(" — ");
+          const parenIdx = e.name.indexOf(" (");
+          if (dashIdx > 0) {
+            groupKey = e.name.substring(0, dashIdx);
+            subLabel = e.name.substring(dashIdx + 3);
+          } else if (parenIdx > 0 && e.name.endsWith(")")) {
+            groupKey = e.name.substring(0, parenIdx);
+            subLabel = e.name.substring(parenIdx + 2, e.name.length - 1);
+          } else {
+            groupKey = e.name;
+            subLabel = null;
+          }
+          if (groupMap[groupKey]) {
+            groupMap[groupKey].eras.push(e);
+            if (subLabel) groupMap[groupKey].subLabels.push(subLabel);
+          } else {
+            const g = {
+              key: groupKey,
+              eras: [e],
+              subLabels: subLabel ? [subLabel] : [],
+              era_type: e.era_type,
+            };
+            groupMap[groupKey] = g;
+            groups.push(g);
+          }
+        }
+        return groups;
+      }
+
+      // Track the selected era group
+      let selectedEraGroup = null;
+
       function renderEraDropdown() {
         const el = document.getElementById("era-dropdown-container");
         if (!selectedCountry) {
@@ -2124,57 +2312,100 @@
           el.innerHTML = "";
           return;
         }
-        const grouped = {};
-        for (const e of eras) {
-          const t = e.era_type;
-          if (!grouped[t]) grouped[t] = [];
-          grouped[t].push(e);
-        }
+        const groups = buildEraGroups(eras);
         const typeLabel = {
           precolonial: "Pre-colonial",
           colonial: "Colonial",
           independence: "Independence",
         };
+
+        // Determine which group is currently selected
+        if (selectedEra && !selectedEraGroup) {
+          selectedEraGroup = groups.find((g) =>
+            g.eras.some((e) => e.id === selectedEra.id),
+          );
+        }
+
+        // Build dropdown with one option per group
         let opts = '<option value="">Current boundaries</option>';
+        const byType = {};
+        for (const g of groups) {
+          if (!byType[g.era_type]) byType[g.era_type] = [];
+          byType[g.era_type].push(g);
+        }
         for (const t of ["precolonial", "colonial", "independence"]) {
-          if (!grouped[t]) continue;
+          if (!byType[t]) continue;
           opts += `<optgroup label="${typeLabel[t] || t}">`;
-          for (const e of grouped[t]) {
-            const sel = selectedEra?.id === e.id ? " selected" : "";
-            const range = e.ended
-              ? `${e.started}–${e.ended}`
-              : `${e.started}–present`;
-            const flag = eraFlag(e);
-            opts += `<option value="${e.id}"${sel}>${flag} ${e.name} (${range})</option>`;
+          for (const g of byType[t]) {
+            const first = g.eras[0];
+            const last = g.eras[g.eras.length - 1];
+            const range = last.ended
+              ? `${first.started}–${last.ended}`
+              : `${first.started}–present`;
+            const sel = selectedEraGroup?.key === g.key ? " selected" : "";
+            const flag = eraFlag(first);
+            opts += `<option value="${g.key}"${sel}>${flag} ${g.key} (${range})</option>`;
           }
           opts += "</optgroup>";
         }
+
+        // Build sub-period tabs if group has multiple eras
+        let subTabsHtml = "";
+        if (selectedEraGroup && selectedEraGroup.eras.length > 1) {
+          const pills = selectedEraGroup.eras
+            .map((e, i) => {
+              const label =
+                selectedEraGroup.subLabels[i] ||
+                (e.ended ? `${e.started}–${e.ended}` : `${e.started}–present`);
+              const active = selectedEra?.id === e.id ? " era-tab-active" : "";
+              return `<button class="era-tab${active}" onclick="onSubEraClick(${e.id})">${label}</button>`;
+            })
+            .join("");
+          subTabsHtml = `<div class="era-tabs">${pills}</div>`;
+        }
+
         // Build summary for selected era
         let summaryHtml = "";
-        if (selectedEra && selectedEra.notes) {
-          const flag = eraFlag(selectedEra);
+        if (selectedEra) {
+          const flagHtml = eraFlagImg(selectedEra);
+          const range = selectedEra.ended
+            ? `${selectedEra.started}–${selectedEra.ended}`
+            : `${selectedEra.started}–present`;
+          const notesHtml = selectedEra.notes
+            ? `<div class="era-summary-notes">${selectedEra.notes}</div>`
+            : "";
+          const sourceHtml = selectedEra.source_url
+            ? `<a href="${selectedEra.source_url}" target="_blank" rel="noopener" class="era-summary-source">${selectedEra.source || "Source"} ↗</a>`
+            : "";
           summaryHtml = `<div class="era-summary">
-            <span class="era-summary-flag">${flag}</span>
-            <span class="era-summary-text">${selectedEra.notes}</span>
+            ${flagHtml}
+            <div class="era-summary-body">
+              <div class="era-summary-title">${selectedEra.name}</div>
+              <div class="era-summary-range">${range}</div>
+              ${notesHtml}
+              ${sourceHtml}
+            </div>
           </div>`;
         }
         el.innerHTML = `<div class="cascade-group" style="margin-bottom:0.6rem">
           <label class="cascade-label">Historical Era</label>
-          <select class="cascade-select" onchange="onEraChange(this)">${opts}</select>
+          <select class="cascade-select" onchange="onEraGroupChange(this)">${opts}</select>
+          ${subTabsHtml}
           ${summaryHtml}
         </div>`;
       }
 
-      async function onEraChange(selectEl) {
-        const eraId = selectEl.value;
+      async function onEraGroupChange(selectEl) {
+        const groupKey = selectEl.value;
         cascadeLevels = [];
         document.getElementById("result-card").innerHTML = "";
-        if (!eraId) {
+        if (!groupKey) {
           selectedEra = null;
+          selectedEraGroup = null;
           selectedSystem = hasDualSystem(selectedCountry) ? "political" : null;
           renderSystemTabs();
+          renderEraDropdown();
           renderCascade();
-          // Reload current top-level
           try {
             const items = await apiFetch(
               `/api/v1/countries/${selectedCountry.code}/top/`,
@@ -2190,17 +2421,37 @@
           }
           return;
         }
-        const allEras = selectedCountry.eras || [];
-        selectedEra = allEras.find((e) => String(e.id) === String(eraId));
+        const eras = (selectedCountry.eras || []).filter(
+          (e) => e.era_type !== "current",
+        );
+        const groups = buildEraGroups(eras);
+        selectedEraGroup = groups.find((g) => g.key === groupKey);
+        if (!selectedEraGroup) return;
+        // Auto-select the first sub-era in the group
+        selectedEra = selectedEraGroup.eras[0];
         selectedSystem = null;
         renderSystemTabs();
+        renderEraDropdown();
         renderCascade();
+        await loadEradivisions(selectedEra.id);
+      }
+
+      async function onSubEraClick(eraId) {
+        const allEras = selectedCountry.eras || [];
+        selectedEra = allEras.find((e) => e.id === eraId);
+        cascadeLevels = [];
+        document.getElementById("result-card").innerHTML = "";
+        renderEraDropdown();
+        renderCascade();
+        await loadEradivisions(eraId);
+      }
+
+      async function loadEradivisions(eraId) {
         try {
           const divs = await apiFetch(
             `/api/v1/divisions/?country=${selectedCountry.code}&era=${eraId}&include_historical=true`,
           );
           if (divs.length > 0) {
-            // Group by level, pick the top (smallest) level
             const byLevel = {};
             for (const d of divs) {
               if (!byLevel[d.level]) byLevel[d.level] = [];
@@ -2212,10 +2463,9 @@
             const topLevel = levels[0];
             const topItems = byLevel[topLevel];
             const levelName = topItems[0]?.level_name || `Level ${topLevel}`;
-            const eraLabel = selectedEra ? selectedEra.name : "";
             cascadeLevels = [
               {
-                levelName: `${levelName} — ${eraLabel}`,
+                levelName,
                 items: topItems,
                 selectedId: null,
                 selectedName: null,
@@ -2224,10 +2474,7 @@
             renderCascade();
           } else {
             document.getElementById("cascade-dropdowns").innerHTML =
-              `<div style="padding:1.2rem 0;font-size:.85rem">
-                <div style="color:var(--ink-soft);margin-bottom:.4rem">No historical divisions available for <strong>${selectedEra.name}</strong> yet.</div>
-                <div style="color:var(--dim);font-size:.78rem">We're working on gathering this data — it will be uploaded as soon as it's available.</div>
-              </div>`;
+              '<div style="padding:1rem 0;color:var(--dim);font-size:.85rem">No divisions recorded for this period</div>';
           }
         } catch (e) {
           document.getElementById("cascade-dropdowns").innerHTML =
@@ -2238,6 +2485,7 @@
       async function pickSystem(system) {
         selectedSystem = system;
         selectedEra = null;
+        selectedEraGroup = null;
         cascadeLevels = [];
         renderSystemTabs();
         renderEraDropdown();
@@ -2265,6 +2513,7 @@
         selectedCountry = countries.find((c) => c.code === code);
         cascadeLevels = [];
         selectedEra = null;
+        selectedEraGroup = null;
         renderCountryPills();
         renderEraDropdown();
 
@@ -2316,8 +2565,16 @@
         // Remove deeper levels
         cascadeLevels = cascadeLevels.slice(0, levelIdx + 1);
 
-        // Show result card
+        // Show result card and collapse era summary
         renderResultCard(selected);
+        if (selected) {
+          updateUrlBar(`/api/v1/divisions/${id}/`);
+          updateJsonViewer({ results: [selected] }, 0);
+        }
+        if (selectedEra && selected) {
+          const summary = document.querySelector(".era-summary");
+          if (summary) summary.style.display = "none";
+        }
         renderCascade();
 
         // If children exist, fetch and add next level
@@ -2327,9 +2584,15 @@
             let childUrl = `/api/v1/divisions/${id}/children/`;
             const params = [];
             if (selectedSystem) params.push(`child_system=${selectedSystem}`);
-            if (selectedEra) params.push("include_historical=true");
+            if (selectedEra) {
+              params.push("include_historical=true");
+              params.push(`era=${selectedEra.id}`);
+            }
             if (params.length) childUrl += "?" + params.join("&");
             const children = await apiFetch(childUrl);
+            // Re-assert the selected division in JSON panel (apiFetch overwrites it)
+            updateUrlBar(`/api/v1/divisions/${id}/`);
+            updateJsonViewer({ results: [selected] }, 0);
             if (children.length > 0) {
               const nextLevelName =
                 children[0]?.level_name ||
@@ -2391,29 +2654,76 @@
           if (lvl.selectedName) pathParts.push(lvl.selectedName);
         }
 
-        // For historical divisions, extract "currently called" from description
+        // For historical divisions, parse description for Currently info
         let currentlyHtml = "";
+        let descriptionHtml = "";
         if (selectedEra && division.description) {
           const desc = division.description;
-          const succMatch = desc.match(/Successor[s]?:\s*([^.]+)/i);
-          if (succMatch) {
-            currentlyHtml = `<div class="result-card-current">Currently → <strong>${succMatch[1].trim()}</strong></div>`;
+          // Split on double newline — first part is history, second is succession
+          const parts = desc.split("\n\n");
+          const historyText = parts[0] || "";
+          const successionText = parts[1] || "";
+
+          if (historyText) {
+            descriptionHtml = `<div class="result-card-desc">${historyText}</div>`;
+          }
+          if (successionText) {
+            currentlyHtml = `<div class="result-card-current">${successionText}</div>`;
           }
         }
+
+        // Build succession chain from API data
+        let successionHtml = "";
+        if (selectedEra) {
+          const parts = [];
+          if (division.predecessors && division.predecessors.length > 0) {
+            const predItems = division.predecessors.map((p) => {
+              const eraShort = p.era_name
+                ? `<span class="succ-era">${p.era_name}</span>`
+                : "";
+              return `<span class="succ-value">${p.name}</span>${eraShort}`;
+            });
+            parts.push(
+              `<div class="succ-row"><span class="succ-label">← Preceded by</span> ${predItems.join(", ")}</div>`,
+            );
+          }
+          if (division.successor) {
+            const s = division.successor;
+            const eraShort = s.era_name
+              ? `<span class="succ-era">${s.era_name}</span>`
+              : "";
+            parts.push(
+              `<div class="succ-row"><span class="succ-label">Succeeded by →</span> <span class="succ-value">${s.name}</span>${eraShort}</div>`,
+            );
+          }
+          if (parts.length > 0) {
+            successionHtml = `<div class="result-card-succession">${parts.join("")}</div>`;
+          }
+        }
+
         // Show era badge for historical divisions
         let eraBadge = "";
         if (division.era_name) {
           eraBadge = `<div class="rcm" style="border-color:var(--ocean)">Era <span style="color:var(--ocean-lt)">${division.era_name}</span></div>`;
         }
 
+        // Headquarters badge
+        let hqBadge = "";
+        if (division.headquarters) {
+          hqBadge = `<div class="rcm" style="border-color:var(--gold)">HQ <span style="color:var(--gold-lt)">${division.headquarters}</span></div>`;
+        }
+
         el.innerHTML = `<div class="result-card">
       <div class="result-card-name">${division.name}</div>
+      ${successionHtml}
       ${currentlyHtml}
+      ${descriptionHtml}
       <div class="result-card-meta">
         <div class="rcm">Level <span>${division.level_name || ""}</span></div>
         ${division.code ? `<div class="rcm">Code <span>${division.code}</span></div>` : ""}
         <div class="rcm">Children <span>${division.children_count ?? 0}</span></div>
         <div class="rcm">ID <span>${division.id}</span></div>
+        ${hqBadge}
         ${eraBadge}
       </div>
       <div class="result-card-path">
