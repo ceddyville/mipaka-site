@@ -2515,6 +2515,14 @@
         selectedEra = null;
         selectedEraGroup = null;
         renderCountryPills();
+
+        // Fetch eras from dedicated endpoint
+        try {
+          const erasData = await apiFetch(`/api/v1/eras/?country=${code}`);
+          selectedCountry.eras = erasData;
+        } catch (e) {
+          selectedCountry.eras = [];
+        }
         renderEraDropdown();
 
         if (hasDualSystem(selectedCountry)) {
