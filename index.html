@@ -820,6 +820,62 @@
         color: var(--laterite);
       }
 
+      /* country overview card */
+      .country-overview {
+        background: rgba(184, 50, 37, 0.06);
+        border: 1px solid var(--border);
+        padding: 1.2rem;
+        animation: fadeUp 0.3s ease both;
+      }
+      .country-overview-name {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--gold-lt);
+        margin-bottom: 0.15rem;
+      }
+      .country-overview-native {
+        font-size: 0.78rem;
+        color: var(--dim);
+        margin-bottom: 0.6rem;
+      }
+      .country-overview-summary {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        color: var(--ocean-lt);
+        margin-bottom: 0.8rem;
+      }
+      .country-overview-tiers {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .country-tier-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        background: rgba(13, 140, 126, 0.06);
+        border-left: 2px solid var(--ocean);
+        border-radius: 2px;
+      }
+      .country-tier-name {
+        color: var(--ink-lt);
+        font-weight: 600;
+      }
+      .country-tier-system {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.62rem;
+        color: var(--dim);
+        letter-spacing: 0.04em;
+      }
+      .country-tier-count {
+        font-family: "Space Mono", "Courier New", monospace;
+        font-size: 0.68rem;
+        color: var(--ocean-lt);
+      }
+
       /* loading shimmer */
       .shimmer {
         background: linear-gradient(
@@ -2198,9 +2254,7 @@
       // ── SYSTEM TABS (Kenya dual hierarchy) ─────────────────────────────────
       function hasDualSystem(country) {
         if (!country?.division_levels) return false;
-        const systems = new Set(
-          country.division_levels.map((l) => l.system),
-        );
+        const systems = new Set(country.division_levels.map((l) => l.system));
         return systems.has("political") && systems.has("administrative");
       }
 
@@ -2520,6 +2574,7 @@
           selectedCountry.eras = [];
         }
         renderEraDropdown();
+        renderCountryOverview();
 
         if (hasDualSystem(selectedCountry)) {
           selectedSystem = "political";
@@ -2642,6 +2697,34 @@
       </div>`;
           })
           .join("");
+      }
+
+      // ── COUNTRY OVERVIEW CARD ──────────────────────────────────────────────────
+      function renderCountryOverview() {
+        const el = document.getElementById("result-card");
+        if (!selectedCountry) { el.innerHTML = ""; return; }
+        const c = selectedCountry;
+        const flag = FLAG_EMOJI[c.code] || "";
+        const displayName = DISPLAY_NAME[c.code] || c.name;
+        const nativeName = c.native_name && c.native_name !== c.name
+          ? `<div class="country-overview-native">${c.native_name}</div>` : "";
+        const tiers = (c.division_levels || []);
+        const total = tiers.reduce((s, l) => s + (l.count || 0), 0);
+        const tierRows = tiers.map(l => {
+          const sys = l.system.replace(/_/g, " ").replace("and", "&");
+          const cnt = l.count != null ? l.count.toLocaleString() : "-";
+          return `<div class="country-tier-row">
+            <span class="country-tier-name">${l.tier}</span>
+            <span class="country-tier-system">${sys}</span>
+            <span class="country-tier-count">${cnt}</span>
+          </div>`;
+        }).join("");
+        el.innerHTML = `<div class="country-overview">
+          <div class="country-overview-name">${flag} ${displayName}</div>
+          ${nativeName}
+          <div class="country-overview-summary">${c.overview || ""} · ${total.toLocaleString()} divisions</div>
+          <div class="country-overview-tiers">${tierRows}</div>
+        </div>`;
       }
 
       // ── RESULT CARD ────────────────────────────────────────────────────────────
