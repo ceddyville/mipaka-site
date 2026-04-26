@@ -2168,9 +2168,7 @@
         label.textContent = `Browse · ${countries.length} Countries`;
         grid.innerHTML = countries
           .map((c) => {
-            const currentLevels = (c.division_levels || []).filter(
-              (l) => l.level < 100,
-            );
+            const currentLevels = c.division_levels || [];
             const cardLevels = currentLevels.filter(
               (l) => l.system !== "political",
             );
@@ -2184,7 +2182,7 @@
               .map((l) => {
                 const cnt =
                   l.count != null ? ` (${l.count.toLocaleString()})` : "";
-                return `<span class="country-level-tag">${l.name}${cnt}</span>`;
+                return `<span class="country-level-tag">${l.tier}${cnt}</span>`;
               })
               .join("");
             return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
@@ -2201,9 +2199,7 @@
       function hasDualSystem(country) {
         if (!country?.division_levels) return false;
         const systems = new Set(
-          country.division_levels
-            .filter((l) => l.level < 100)
-            .map((l) => l.system),
+          country.division_levels.map((l) => l.system),
         );
         return systems.has("political") && systems.has("administrative");
       }
@@ -2411,7 +2407,7 @@
               `/api/v1/countries/${selectedCountry.code}/top/`,
             );
             const levelName =
-              selectedCountry.division_levels?.[0]?.name || "Level 1";
+              selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
@@ -2497,7 +2493,7 @@
             `/api/v1/countries/${selectedCountry.code}/top/`,
           );
           const levelName =
-            selectedCountry.division_levels?.[0]?.name || "Level 1";
+            selectedCountry.division_levels?.[0]?.tier || "Level 1";
           cascadeLevels = [
             { levelName, items, selectedId: null, selectedName: null },
           ];
@@ -2532,7 +2528,7 @@
           try {
             const items = await apiFetch(`/api/v1/countries/${code}/top/`);
             const levelName =
-              selectedCountry.division_levels?.[0]?.name || "Level 1";
+              selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
@@ -2548,7 +2544,7 @@
           try {
             const items = await apiFetch(`/api/v1/countries/${code}/top/`);
             const levelName =
-              selectedCountry.division_levels?.[0]?.name || "Level 1";
+              selectedCountry.division_levels?.[0]?.tier || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
