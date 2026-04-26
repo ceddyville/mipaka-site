@@ -2740,9 +2740,10 @@
           <div class="country-overview-summary">${c.overview || ""} · ${total.toLocaleString()} divisions</div>
           <div class="country-overview-tiers">${tierRows}</div>
         </div>`;
-        // Show the country endpoint in the API panel
+        // Show the country endpoint in the API panel (without attached eras)
         updateUrlBar(`/api/v1/countries/${c.code}/`);
-        updateJsonViewer(c, 0);
+        const { eras, ...countryData } = c;
+        updateJsonViewer(countryData, 0);
       }
 
       // ── RESULT CARD ────────────────────────────────────────────────────────────
