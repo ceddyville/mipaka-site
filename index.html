@@ -2238,7 +2238,7 @@
               .map((l) => {
                 const cnt =
                   l.count != null ? ` (${l.count.toLocaleString()})` : "";
-                return `<span class="country-level-tag">${l.tier}${cnt}</span>`;
+                return `<span class="country-level-tag">${l.name}${cnt}</span>`;
               })
               .join("");
             return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
@@ -2463,7 +2463,7 @@
             const data = await res.json();
             const items = data.results || data;
             const levelName =
-              selectedCountry.division_levels?.[0]?.tier || "Level 1";
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
@@ -2551,7 +2551,7 @@
           const data = await res.json();
           const items = data.results || data;
           const levelName =
-            selectedCountry.division_levels?.[0]?.tier || "Level 1";
+            selectedCountry.division_levels?.[0]?.name || "Level 1";
           cascadeLevels = [
             { levelName, items, selectedId: null, selectedName: null },
           ];
@@ -2589,7 +2589,7 @@
             const data = await res.json();
             const items = data.results || data;
             const levelName =
-              selectedCountry.division_levels?.[0]?.tier || "Level 1";
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
@@ -2607,7 +2607,7 @@
             const data = await res.json();
             const items = data.results || data;
             const levelName =
-              selectedCountry.division_levels?.[0]?.tier || "Level 1";
+              selectedCountry.division_levels?.[0]?.name || "Level 1";
             cascadeLevels = [
               { levelName, items, selectedId: null, selectedName: null },
             ];
@@ -2728,7 +2728,7 @@
             const sys = l.system.replace(/_/g, " ").replace("and", "&");
             const cnt = l.count != null ? l.count.toLocaleString() : "-";
             return `<div class="country-tier-row">
-            <span class="country-tier-name">${l.tier}</span>
+            <span class="country-tier-name">${l.name}</span>
             <span class="country-tier-system">${sys}</span>
             <span class="country-tier-count">${cnt}</span>
           </div>`;
