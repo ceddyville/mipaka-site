@@ -2224,7 +2224,9 @@
         label.textContent = `Browse · ${countries.length} Countries`;
         grid.innerHTML = countries
           .map((c) => {
-            const currentLevels = c.division_levels || [];
+            const currentLevels = (c.division_levels || []).filter(
+              (l) => l.level < 100 && l.count > 0,
+            );
             const cardLevels = currentLevels.filter(
               (l) => l.system !== "political",
             );
