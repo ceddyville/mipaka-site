@@ -2264,14 +2264,17 @@
                 return `<span class="country-level-tag">${l.name}${cnt}</span>`;
               })
               .join("");
-            const histSection = historicalLevels.length > 0
-              ? `<div class="country-card-historical">
+            const histSection =
+              historicalLevels.length > 0
+                ? `<div class="country-card-historical">
                   <div class="country-card-historical-label">Historical</div>
-                  <div class="country-card-levels">${historicalLevels.map((l) => {
-                    return `<span class="country-level-tag historical">${l.name} (${l.count.toLocaleString()})</span>`;
-                  }).join("")}</div>
+                  <div class="country-card-levels">${historicalLevels
+                    .map((l) => {
+                      return `<span class="country-level-tag historical">${l.name} (${l.count.toLocaleString()})</span>`;
+                    })
+                    .join("")}</div>
                 </div>`
-              : "";
+                : "";
             return `<a href="#explorer" class="country-card" onclick="pickCountry('${c.code}')">
             <div class="country-card-flag">${flag}</div>
             <div class="country-card-name">${displayName}</div>
